@@ -1,18 +1,47 @@
- const CHESS_PIECES = {
-    WHITE_PAWN: "w_♙",
-    WHITE_KNIGHT: "w_♘",
-    WHITE_ROOK: "w_♖",
-    WHITE_BISHOP: "w_♗",
-    WHITE_QUEEN: "w_♕",
-    WHITE_KING: "w_♔",
+const CHESS_PIECES = {
+  WHITE_PAWN: "w_pawn",
+  WHITE_KNIGHT: "w_knight",
+  WHITE_ROOK: "w_rook",
+  WHITE_BISHOP: "w_bishop",
+  WHITE_QUEEN: "w_queen",
+  WHITE_KING: "w_king",
 
-    // Add the rest of the black chess pieces here
-    BLACK_PAWN: "b_♙",
-    BLACK_BISHOP: "b_♝",
-    BLACK_QUEEN: "b_♛",
-    BLACK_KING: "b_♚",
-    BLACK_ROOK: "b_♜",
-    BLACK_KNIGHT: "b_♞",
+  // Add the rest of the black chess pieces here
+  BLACK_PAWN: "b_pawn",
+  BLACK_BISHOP: "b_bishop",
+  BLACK_QUEEN: "b_queen",
+  BLACK_KING: "b_king",
+  BLACK_ROOK: "b_rook",
+  BLACK_KNIGHT: "b_knight",
 };
 
 module.exports = CHESS_PIECES;
+
+let arr = [
+  [
+    "",
+    "w_knight",
+    "w_bishop",
+    "w_queen",
+    "w_king",
+    "w_bishop",
+    "w_knight",
+    "w_rook",
+  ],
+  ["", "w_pawn", "w_pawn", "w_pawn", "w_pawn", "w_pawn", "w_pawn", "w_pawn"],
+  ["", "", "", "", "", "", "", ""],
+  ["", "", "", "", "", "", "", "w_rook"],
+  ["", "", "", "", "", "w_knight", "", ""],
+  ["b_pawn", "", "", "", "", "", "", ""],
+  ["", "", "b_pawn", "", "b_pawn", "b_pawn", "b_pawn", "b_pawn"],
+  [
+    "b_rook",
+    "",
+    "b_bishop",
+    "b_queen",
+    "b_king",
+    "b_bishop",
+    "b_knight",
+    "b_rook",
+  ],
+];
