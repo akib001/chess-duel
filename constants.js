@@ -17,7 +17,7 @@ const CHESS_PIECES = {
 
 module.exports = CHESS_PIECES;
 
-let arr = [
+let board = [
   [
     "",
     "w_knight",
@@ -33,7 +33,7 @@ let arr = [
   ["", "", "", "", "", "", "", "w_rook"],
   ["", "", "", "", "", "w_knight", "", ""],
   ["b_pawn", "", "", "", "", "", "", ""],
-  ["", "", "b_pawn", "", "b_pawn", "b_pawn", "b_pawn", "b_pawn"],
+  ["", "", "b_pawn", "", "", "b_pawn", "b_pawn", "b_pawn"],
   [
     "b_rook",
     "",
@@ -45,3 +45,15 @@ let arr = [
     "b_rook",
   ],
 ];
+
+/*
+  gameHistory = [{
+    playerType, 
+    startRow,
+    StartCol,
+    endRow,
+    endCol, 
+    captured,
+  }]
+
+*/

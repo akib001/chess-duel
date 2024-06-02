@@ -50,7 +50,7 @@ board = [
   ["", "", "", "", "", "", "", "w_rook"],
   ["", "", "", "", "", "w_knight", "", ""],
   ["b_pawn", "", "", "", "", "", "", ""],
-  ["", "", "b_pawn", "", "b_pawn", "b_pawn", "b_pawn", "b_pawn"],
+  ["", "", "b_pawn", "", "", "b_pawn", "b_pawn", "b_pawn"],
   [
     "b_rook",
     "",
@@ -62,6 +62,8 @@ board = [
     "b_rook",
   ],
 ];
+
+const gameHistory = [];
 
 const checkPawnMoves = (
   startRow,
@@ -159,8 +161,6 @@ const BISHOP_MOVES = [
 ];
 
 const checkBishopMoves = (startRow, startCol, endRow, endCol, playerType) => {
-  const multi = playerType == 0 ? 1 : 1;
-
   for (const [row, col] of BISHOP_MOVES) {
     let tempRow = startRow;
     let tempCol = startCol;
@@ -189,6 +189,61 @@ const checkBishopMoves = (startRow, startCol, endRow, endCol, playerType) => {
   return false;
 };
 
+const QUEEN_MOVIES = [...BISHOP_MOVES, [1, 0], [0, 1], [-1, 0], [0, -1]];
+
+const checkQueenMoves = (startRow, startCol, endRow, endCol, playerType) => {
+  for (const [row, col] of QUEEN_MOVIES) {
+    let tempRow = startRow;
+    let tempCol = startCol;
+
+    while (true) {
+      tempRow = tempRow + row;
+      tempCol = tempCol + col;
+
+      // out bound
+      if (tempRow < 0 || tempRow > 7 || tempCol < 0 || tempCol > 7) {
+        break;
+      }
+
+      if (tempRow == endRow && tempCol == endCol) {
+        return true;
+      }
+
+      if (board[tempRow][tempCol]) {
+        break;
+      }
+    }
+  }
+
+  console.log("could not found any matching end");
+
+  return false;
+};
+
+const checkKingMoves = (startRow, startCol, endRow, endCol, playerType) => {
+  for (const [row, col] of QUEEN_MOVIES) {
+    let tempRow = startRow + row;
+    let tempCol = startCol + col;
+
+    // out bound
+    if (tempRow < 0 || tempRow > 7 || tempCol < 0 || tempCol > 7) {
+      continue;
+    }
+
+    if (tempRow == endRow && tempCol == endCol) {
+      return true;
+    }
+
+    if (board[tempRow][tempCol]) {
+      continue;
+    }
+  }
+
+  console.log("could not found any matching end");
+
+  return false;
+};
+
 /*
  for loop
   if reach end: return true
@@ -200,6 +255,19 @@ const checkBishopMoves = (startRow, startCol, endRow, endCol, playerType) => {
 
 const move = (startRow, startCol, endRow, endCol, playerType) => {
   const targetPiece = board[startRow][startCol];
+
+  if (targetPiece) {
+    console.log("There is no target piece");
+    return;
+  }
+
+  if (gameHistory.length > 0) {
+    if (gameHistory[gameHistory?.length - 1]?.playerType == playerType) {
+      console.log("A player can not play multiple times in a row");     
+      return;
+    }
+  }
+
   const isTryingToCapture =
     board[endRow][endCol] &&
     board[endRow][endCol].startsWith(playerType == 0 ? "b" : "w");
@@ -216,8 +284,6 @@ const move = (startRow, startCol, endRow, endCol, playerType) => {
     return;
   }
 
-  console.log("target", targetPiece, startRow, startCol);
-
   if (!targetPiece) {
     console.log("could not find the piece");
     return;
@@ -230,6 +296,8 @@ const move = (startRow, startCol, endRow, endCol, playerType) => {
     console.log("can not capture own piece", board[endRow][endCol]);
     return;
   }
+
+  let capturedPiece;
 
   if (
     targetPiece == CHESS_PIECES.BLACK_PAWN ||
@@ -246,9 +314,7 @@ const move = (startRow, startCol, endRow, endCol, playerType) => {
       )
     ) {
       if (isTryingToCapture) {
-        let capturedPiece = board[endRow][endCol];
-        capturedPieces.push(capturedPiece);
-        console.log("capturedPiece", capturedPiece);
+        capturedPiece = board[endRow][endCol];
       }
       board[startRow][startCol] = "";
       board[endRow][endCol] = targetPiece;
@@ -259,9 +325,7 @@ const move = (startRow, startCol, endRow, endCol, playerType) => {
   ) {
     if (checkRookMoves(startRow, startCol, endRow, endCol, playerType)) {
       if (isTryingToCapture) {
-        let capturedPiece = board[endRow][endCol];
-        capturedPieces.push(capturedPiece);
-        console.log("capturedPiece", capturedPieces);
+        capturedPiece = board[endRow][endCol];
       }
       board[startRow][startCol] = "";
       board[endRow][endCol] = targetPiece;
@@ -272,9 +336,7 @@ const move = (startRow, startCol, endRow, endCol, playerType) => {
   ) {
     if (checkKnightMoves(startRow, startCol, endRow, endCol)) {
       if (isTryingToCapture) {
-        let capturedPiece = board[endRow][endCol];
-        capturedPieces.push(capturedPiece);
-        console.log("capturedPiece", capturedPieces);
+        capturedPiece = board[endRow][endCol];
       }
       board[startRow][startCol] = "";
       board[endRow][endCol] = targetPiece;
@@ -286,12 +348,50 @@ const move = (startRow, startCol, endRow, endCol, playerType) => {
     console.log("bishop");
     if (checkBishopMoves(startRow, startCol, endRow, endCol, playerType)) {
       if (isTryingToCapture) {
-        let capturedPiece = board[endRow][endCol];
-        capturedPieces.push(capturedPiece);
-        console.log("capturedPiece", capturedPieces);
+        capturedPiece = board[endRow][endCol];
       }
       board[startRow][startCol] = "";
       board[endRow][endCol] = targetPiece;
+    }
+  } else if (
+    targetPiece == CHESS_PIECES.BLACK_QUEEN ||
+    targetPiece == CHESS_PIECES.WHITE_QUEEN
+  ) {
+    console.log("queen");
+    if (checkQueenMoves(startRow, startCol, endRow, endCol, playerType)) {
+      if (isTryingToCapture) {
+        capturedPiece = board[endRow][endCol];
+      }
+      board[startRow][startCol] = "";
+      board[endRow][endCol] = targetPiece;
+    }
+  } else if (
+    targetPiece == CHESS_PIECES.BLACK_KING ||
+    targetPiece == CHESS_PIECES.WHITE_KING
+  ) {
+    console.log("king");
+    if (checkKingMoves(startRow, startCol, endRow, endCol, playerType)) {
+      if (isTryingToCapture) {
+        capturedPiece = board[endRow][endCol];
+      }
+      board[startRow][startCol] = "";
+      board[endRow][endCol] = targetPiece;
+    }
+  }
+
+  // check if move successful
+  if (startCol != endCol || startRow != endRow) {
+    gameHistory.push({
+      playerType,
+      startRow,
+      startCol,
+      endRow,
+      endCol,
+      capturedPiece,
+    });
+
+    if (capturedPiece) {
+      capturedPieces.push(capturedPiece);
     }
   }
 
@@ -306,6 +406,8 @@ const move = (startRow, startCol, endRow, endCol, playerType) => {
   );
 
   console.log("board", board);
+
+  console.log("gameHistory", gameHistory);
 };
 
-move(7, 2, 4, 5, 1);
+move(7, 4, 6, 4, 1);
