@@ -1,65 +1,49 @@
 const CHESS_PIECES = require("./constants.js");
 
-let board = [];
-const capturedPieces = [];
-
-for (let i = 0; i < 8; i++) {
-  board.push([]);
-  for (let j = 0; j < 8; j++) {
-    board[i].push("");
-  }
-}
-
-// initial setup
-// for (let i = 0; i < 8; i++) {
-//   board[1][i] = CHESS_PIECES.WHITE_PAWN;
-//   board[6][i] = CHESS_PIECES.BLACK_PAWN;
-// }
-
-// board[0][0] = CHESS_PIECES.WHITE_ROOK;
-// board[0][1] = CHESS_PIECES.WHITE_KNIGHT;
-// board[0][2] = CHESS_PIECES.WHITE_BISHOP;
-// board[0][3] = CHESS_PIECES.WHITE_QUEEN;
-// board[0][4] = CHESS_PIECES.WHITE_KING;
-// board[0][5] = CHESS_PIECES.WHITE_BISHOP;
-// board[0][6] = CHESS_PIECES.WHITE_KNIGHT;
-// board[0][7] = CHESS_PIECES.WHITE_ROOK;
-
-// board[7][0] = CHESS_PIECES.BLACK_ROOK;
-// board[7][1] = CHESS_PIECES.BLACK_KNIGHT;
-// board[7][2] = CHESS_PIECES.BLACK_BISHOP;
-// board[7][3] = CHESS_PIECES.BLACK_QUEEN;
-// board[7][4] = CHESS_PIECES.BLACK_KING;
-// board[7][5] = CHESS_PIECES.BLACK_BISHOP;
-// board[7][6] = CHESS_PIECES.BLACK_KNIGHT;
-// board[7][7] = CHESS_PIECES.BLACK_ROOK;
-
-board = [
+let board = [
   [
-    "",
-    "w_knight",
-    "w_bishop",
-    "w_queen",
-    "w_king",
-    "w_bishop",
-    "w_knight",
-    "w_rook",
+    CHESS_PIECES.WHITE_ROOK,
+    CHESS_PIECES.WHITE_KNIGHT,
+    CHESS_PIECES.WHITE_BISHOP,
+    CHESS_PIECES.WHITE_QUEEN,
+    CHESS_PIECES.WHITE_KING,
+    CHESS_PIECES.WHITE_BISHOP,
+    CHESS_PIECES.WHITE_KNIGHT,
+    CHESS_PIECES.WHITE_ROOK,
   ],
-  ["", "w_pawn", "w_pawn", "w_pawn", "w_pawn", "w_pawn", "w_pawn", "w_pawn"],
-  ["", "", "", "", "", "", "", ""],
-  ["", "", "", "", "", "", "", "w_rook"],
-  ["", "", "", "", "", "w_knight", "", ""],
-  ["b_pawn", "", "", "", "", "", "", ""],
-  ["", "", "b_pawn", "", "", "b_pawn", "b_pawn", "b_pawn"],
   [
-    "b_rook",
-    "",
-    "b_bishop",
-    "b_queen",
-    "b_king",
-    "b_bishop",
-    "b_knight",
-    "b_rook",
+    CHESS_PIECES.WHITE_PAWN,
+    CHESS_PIECES.WHITE_PAWN,
+    CHESS_PIECES.WHITE_PAWN,
+    CHESS_PIECES.WHITE_PAWN,
+    CHESS_PIECES.WHITE_PAWN,
+    CHESS_PIECES.WHITE_PAWN,
+    CHESS_PIECES.WHITE_PAWN,
+    CHESS_PIECES.WHITE_PAWN,
+  ],
+  ["", "", "", "", "", "", "", ""],
+  ["", "", "", "", "", "", "", ""],
+  ["", "", "", "", "", "", "", ""],
+  ["", "", "", "", "", "", "", ""],
+  [
+    CHESS_PIECES.BLACK_PAWN,
+    CHESS_PIECES.BLACK_PAWN,
+    CHESS_PIECES.BLACK_PAWN,
+    CHESS_PIECES.BLACK_PAWN,
+    CHESS_PIECES.BLACK_PAWN,
+    CHESS_PIECES.BLACK_PAWN,
+    CHESS_PIECES.BLACK_PAWN,
+    CHESS_PIECES.BLACK_PAWN,
+  ],
+  [
+    CHESS_PIECES.BLACK_ROOK,
+    CHESS_PIECES.BLACK_KNIGHT,
+    CHESS_PIECES.BLACK_BISHOP,
+    CHESS_PIECES.BLACK_QUEEN,
+    CHESS_PIECES.BLACK_KING,
+    CHESS_PIECES.BLACK_BISHOP,
+    CHESS_PIECES.BLACK_KNIGHT,
+    CHESS_PIECES.BLACK_ROOK,
   ],
 ];
 
@@ -252,70 +236,80 @@ const checkMove = (
   playerType,
   isTryingToCapture
 ) => {
-  switch (piece) {
-    case CHESS_PIECES.WHITE_PAWN || CHESS_PIECES.BLACK_PAWN: {
-      return checkPawnMoves(
-        startRow,
-        startCol,
-        targetKing.row,
-        targetKing.col,
-        playerType,
-        isTryingToCapture
-      );
-    }
-    case CHESS_PIECES.WHITE_ROOK || CHESS_PIECES.BLACK_ROOK: {
-      return checkRookMoves(
-        startRow,
-        startCol,
-        targetKing.row,
-        targetKing.col,
-        playerType,
-        isTryingToCapture
-      );
-    }
-    case CHESS_PIECES.WHITE_KNIGHT || CHESS_PIECES.BLACK_KNIGHT: {
-      return checkKnightMoves(
-        startRow,
-        startCol,
-        targetKing.row,
-        targetKing.col,
-        playerType,
-        isTryingToCapture
-      );
-    }
-    case CHESS_PIECES.WHITE_BISHOP || CHESS_PIECES.BLACK_BISHOP: {
-      return checkBishopMoves(
-        startRow,
-        startCol,
-        targetKing.row,
-        targetKing.col,
-        playerType,
-        isTryingToCapture
-      );
-    }
-    case CHESS_PIECES.WHITE_QUEEN || CHESS_PIECES.BLACK_QUEEN: {
-      return checkQueenMoves(
-        startRow,
-        startCol,
-        targetKing.row,
-        targetKing.col,
-        playerType,
-        isTryingToCapture
-      );
-    }
-    case CHESS_PIECES.WHITE_KING || CHESS_PIECES.BLACK_KING: {
-      return checkKingMoves(
-        startRow,
-        startCol,
-        targetKing.row,
-        targetKing.col,
-        playerType,
-        isTryingToCapture
-      );
-    }
+  const targetPiece = board[startRow][startCol];
 
-    default:
-      throw error("Unknown Piece move");
+  if (
+    targetPiece == CHESS_PIECES.WHITE_PAWN ||
+    targetPiece == CHESS_PIECES.BLACK_PAWN
+  ) {
+    return checkPawnMoves(
+      startRow,
+      startCol,
+      endRow,
+      endCol,
+      playerType,
+      isTryingToCapture
+    );
+  } else if (
+    targetPiece == CHESS_PIECES.WHITE_ROOK ||
+    targetPiece == CHESS_PIECES.BLACK_ROOK
+  ) {
+    return checkRookMoves(
+      startRow,
+      startCol,
+      endRow,
+      endCol,
+      playerType,
+      isTryingToCapture
+    );
+  } else if (
+    targetPiece == CHESS_PIECES.WHITE_KNIGHT ||
+    targetPiece == CHESS_PIECES.BLACK_KNIGHT
+  ) {
+    return checkKnightMoves(
+      startRow,
+      startCol,
+      endRow,
+      endCol,
+      playerType,
+      isTryingToCapture
+    );
+  } else if (
+    targetPiece == CHESS_PIECES.WHITE_BISHOP ||
+    targetPiece == CHESS_PIECES.BLACK_BISHOP
+  ) {
+    return checkBishopMoves(
+      startRow,
+      startCol,
+      endRow,
+      endCol,
+      playerType,
+      isTryingToCapture
+    );
+  } else if (
+    targetPiece == CHESS_PIECES.WHITE_QUEEN ||
+    targetPiece == CHESS_PIECES.BLACK_QUEEN
+  ) {
+    return checkQueenMoves(
+      startRow,
+      startCol,
+      endRow,
+      endCol,
+      playerType,
+      isTryingToCapture
+    );
+  } else if (
+    targetPiece == CHESS_PIECES.WHITE_KING ||
+    targetPiece == CHESS_PIECES.BLACK_KING
+  ) {
+    return checkKingMoves(
+      startRow,
+      startCol,
+      endRow,
+      endCol,
+      playerType,
+      isTryingToCapture
+    );
   }
 };
 
@@ -369,85 +363,13 @@ const move = (startRow, startCol, endRow, endCol, playerType) => {
 
   let capturedPiece;
 
-  // if (
-  //   targetPiece == CHESS_PIECES.BLACK_PAWN ||
-  //   targetPiece == CHESS_PIECES.WHITE_PAWN
-  // ) {
-  //   if (
-  //     checkPawnMoves(
-  //       startRow,
-  //       startCol,
-  //       endRow,
-  //       endCol,
-  //       playerType,
-  //       isTryingToCapture
-  //     )
-  //   ) {
-  //     if (isTryingToCapture) {
-  //       capturedPiece = board[endRow][endCol];
-  //     }
-  //     board[startRow][startCol] = "";
-  //     board[endRow][endCol] = targetPiece;
-  //   }
-  // } else if (
-  //   targetPiece == CHESS_PIECES.BLACK_ROOK ||
-  //   targetPiece == CHESS_PIECES.WHITE_ROOK
-  // ) {
-  //   if (checkRookMoves(startRow, startCol, endRow, endCol, playerType)) {
-  //     if (isTryingToCapture) {
-  //       capturedPiece = board[endRow][endCol];
-  //     }
-  //     board[startRow][startCol] = "";
-  //     board[endRow][endCol] = targetPiece;
-  //   }
-  // } else if (
-  //   targetPiece == CHESS_PIECES.BLACK_KNIGHT ||
-  //   targetPiece == CHESS_PIECES.WHITE_KNIGHT
-  // ) {
-  //   if (checkKnightMoves(startRow, startCol, endRow, endCol)) {
-  //     if (isTryingToCapture) {
-  //       capturedPiece = board[endRow][endCol];
-  //     }
-  //     board[startRow][startCol] = "";
-  //     board[endRow][endCol] = targetPiece;
-  //   }
-  // } else if (
-  //   targetPiece == CHESS_PIECES.BLACK_BISHOP ||
-  //   targetPiece == CHESS_PIECES.WHITE_BISHOP
-  // ) {
-  //   console.log("bishop");
-  //   if (checkBishopMoves(startRow, startCol, endRow, endCol, playerType)) {
-  //     if (isTryingToCapture) {
-  //       capturedPiece = board[endRow][endCol];
-  //     }
-  //     board[startRow][startCol] = "";
-  //     board[endRow][endCol] = targetPiece;
-  //   }
-  // } else if (
-  //   targetPiece == CHESS_PIECES.BLACK_QUEEN ||
-  //   targetPiece == CHESS_PIECES.WHITE_QUEEN
-  // ) {
-  //   console.log("queen");
-  //   if (checkQueenMoves(startRow, startCol, endRow, endCol, playerType)) {
-  //     if (isTryingToCapture) {
-  //       capturedPiece = board[endRow][endCol];
-  //     }
-  //     board[startRow][startCol] = "";
-  //     board[endRow][endCol] = targetPiece;
-  //   }
-  // } else if (
-  //   targetPiece == CHESS_PIECES.BLACK_KING ||
-  //   targetPiece == CHESS_PIECES.WHITE_KING
-  // ) {
-  //   console.log("king");
-  //   if (checkKingMoves(startRow, startCol, endRow, endCol, playerType)) {
-  //     if (isTryingToCapture) {
-  //       capturedPiece = board[endRow][endCol];
-  //     }
-  //     board[startRow][startCol] = "";
-  //     board[endRow][endCol] = targetPiece;
-  //   }
-  // }
+  if (checkMove(startRow, startCol, endRow, endCol, playerType)) {
+    if (isTryingToCapture) {
+      capturedPiece = board[endRow][endCol];
+    }
+    board[startRow][startCol] = "";
+    board[endRow][endCol] = targetPiece;
+  }
 
   // check if move successful
   if (startCol != endCol || startRow != endRow) {
@@ -483,89 +405,30 @@ const move = (startRow, startCol, endRow, endCol, playerType) => {
     }
   }
 
-  let kingChecked;
+  console.log("Checking king check");
 
   for (let key in mapping) {
-    let piece = key.split("-")[0];
+    if (
+      checkMove(
+        mapping[key].row,
+        mapping[key].col,
+        targetKing.row,
+        targetKing.col,
+        true
+      )
+    ) {
+      board[startRow][endRow] = board[endRow][endCol];
 
-    switch (piece) {
-      case CHESS_PIECES.WHITE_PAWN || CHESS_PIECES.BLACK_PAWN: {
-        kingChecked = checkPawnMoves(
-          startRow,
-          startCol,
-          targetKing.row,
-          targetKing.col,
-          playerType,
-          true
-        );
-        break;
-      }
-      case CHESS_PIECES.WHITE_ROOK || CHESS_PIECES.BLACK_ROOK: {
-        kingChecked = checkRookMoves(
-          startRow,
-          startCol,
-          targetKing.row,
-          targetKing.col,
-          playerType,
-          true
-        );
-        break;
-      }
-      case CHESS_PIECES.WHITE_KNIGHT || CHESS_PIECES.BLACK_KNIGHT: {
-        kingChecked = checkKnightMoves(
-          startRow,
-          startCol,
-          targetKing.row,
-          targetKing.col,
-          playerType,
-          true
-        );
-        break;
-      }
-      case CHESS_PIECES.WHITE_BISHOP || CHESS_PIECES.BLACK_BISHOP: {
-        kingChecked = checkBishopMoves(
-          startRow,
-          startCol,
-          targetKing.row,
-          targetKing.col,
-          playerType,
-          true
-        );
-        break;
-      }
-      case CHESS_PIECES.WHITE_QUEEN || CHESS_PIECES.BLACK_QUEEN: {
-        kingChecked = checkQueenMoves(
-          startRow,
-          startCol,
-          targetKing.row,
-          targetKing.col,
-          playerType,
-          true
-        );
-        break;
-      }
-      case CHESS_PIECES.WHITE_KING || CHESS_PIECES.BLACK_KING: {
-        kingChecked = checkKingMoves(
-          startRow,
-          startCol,
-          targetKing.row,
-          targetKing.col,
-          playerType,
-          true
-        );
-        break;
+      if (isTryingToCapture) {
+        board[endRow][endCol] = capturedPiece;
       }
 
-      default:
-        throw error("Unknown Piece");
-    }
-
-    if (kingChecked) {
-      break;
+      console.log("King will be in check");
+      return;
     }
   }
 
-  console.log("mapping", mapping);
+  // console.log("mapping", mapping);
 
   console.log(
     "",
