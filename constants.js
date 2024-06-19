@@ -44,7 +44,7 @@ let board = [
     "b_knight",
     "b_rook",
   ],
-];
+]; 
 
 /*
   gameHistory = [{
@@ -56,4 +56,13 @@ let board = [
     captured,
   }]
 
+*/
+
+
+/*
+  Check if its a valid move
+  Find own side king in the board
+  Then check if any opponent side piece can capture king
+
+  
 */
