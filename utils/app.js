@@ -1,6 +1,6 @@
-const CHESS_PIECES = require("./constants.js");
+import { CHESS_PIECES } from "./constants";
 
-let board = [
+export let board = [
   [
     CHESS_PIECES.WHITE_ROOK,
     CHESS_PIECES.WHITE_KNIGHT,

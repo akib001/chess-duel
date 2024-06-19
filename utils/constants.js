@@ -1,4 +1,4 @@
-const CHESS_PIECES = {
+export const CHESS_PIECES = {
   WHITE_PAWN: "w_pawn",
   WHITE_KNIGHT: "w_knight",
   WHITE_ROOK: "w_rook",
@@ -14,8 +14,6 @@ const CHESS_PIECES = {
   BLACK_ROOK: "b_rook",
   BLACK_KNIGHT: "b_knight",
 };
-
-module.exports = CHESS_PIECES;
 
 let board = [
   [
