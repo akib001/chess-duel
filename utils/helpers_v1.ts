@@ -59,7 +59,7 @@ const checkPawnMoves = (
 ) => {
   const multi = playerType == 0 ? -1 : 1;
 
-  let rowDiff = playerType * (startRow - endRow);
+  let rowDiff = multi * (startRow - endRow);
   let colDiff = Math.abs(startCol - endCol);
 
   if (isTryingToCapture && colDiff == 1 && rowDiff == 1) {
