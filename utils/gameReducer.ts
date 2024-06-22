@@ -79,7 +79,6 @@ export default function gameReducer(state = initialState, action: any) {
           selectedLocation,
           targetLocation,
           currentPlayer,
-          isTryingToCapture,
           board
         )
       ) {
@@ -105,17 +104,22 @@ export default function gameReducer(state = initialState, action: any) {
           }
         });
 
-        const isCheckmate = opponentPiecesIndexes.every((index) => {
+        console.log("opponentPiecesIndexes", opponentPiecesIndexes);
+        console.log("targetKingIndex", targetKingIndex);
+
+
+        const isCheckmate = opponentPiecesIndexes.some((index) => {
           return checkMove(
             index,
             targetKingIndex,
             currentPlayer == PlayerTypes.WHITE
               ? PlayerTypes.BLACK
               : PlayerTypes.WHITE,
-            true,
-            board
+            copiedBoard
           );
         });
+
+        console.log("isCheckmate", isCheckmate);
 
         if (isCheckmate) {
           console.log("Checkmate");

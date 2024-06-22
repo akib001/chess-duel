@@ -68,13 +68,12 @@ export default function Square({ index, children, gameState }: SquareProps) {
         selectedLocation,
         index,
         currentPlayer,
-        isTryingToCapture,
         board
       )
     ) {
       return isTryingToCapture
-        ? "outline outline-2 outline-offset-[-2px] outline-red-500"
-        : "outline outline-2 outline-offset-[-2px] outline-green-500";
+        ? "outline outline-4 outline-offset-[-4px] outline-red-500"
+        : "outline outline-4 outline-offset-[-4px] outline-green-500";
     }
   };
 
@@ -83,10 +82,11 @@ export default function Square({ index, children, gameState }: SquareProps) {
       className={`w-[12.5%] flex justify-center items-center 
       ${getCellColor(index)}  ${
         selectedLocation === index
-          ? "outline outline-2 outline-offset-[-2px] outline-blue-500"
+          ? "outline outline-4 outline-offset-[-4px] outline-blue-500"
           : ""
       } ${canMoveCheckerStyle()}`}
     >
+      <p className="bg-green-300 text-xs">{index}</p>
       {children}
     </div>
   );

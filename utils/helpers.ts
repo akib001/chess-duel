@@ -1,52 +1,47 @@
 import { Piece, PlayerTypes } from "./enums";
 
 const checkPawnMoves = (
-  startRow: number,
-  startCol: number,
-  endRow: number,
-  endCol: number,
+  startLocation: number,
+  endLocation: number,
   playerType: PlayerTypes,
-  isTryingToCapture = false,
   board: Array<Piece>
 ) => {
-  const multi = playerType == PlayerTypes.WHITE ? 1 : -1;
+  const direction = playerType === PlayerTypes.WHITE ? -8 : 8;
+  const startRow = Math.floor(startLocation / 8);
+  const endRow = Math.floor(endLocation / 8);
+  const startCol = startLocation % 8;
+  const endCol = endLocation % 8;
 
-  let rowDiff = multi * (startRow - endRow);
-  let colDiff = Math.abs(startCol - endCol);
-
-  if (isTryingToCapture && colDiff == 1 && rowDiff == 1) {
+  // Capture moves
+  if (
+    board[endLocation] !== Piece.EMPTY &&
+    Math.abs(startCol - endCol) === 1 &&
+    endRow - startRow === direction / 8
+  ) {
     return true;
-  } else if (colDiff > 0) {
-    console.log("can not go horizontal");
-    return false;
-  } else {
-    if (rowDiff < 0) {
-      console.log("can not go backward");
-      return false;
-    }
+  }
 
-    if (board[(startRow + multi * -1) * 8 + startCol]) {
-      console.log("another piece exist in the path");
-      return false;
+  // Forward moves
+  if (board[endLocation] === Piece.EMPTY && startCol === endCol) {
+    // Single step forward
+    if (endLocation - startLocation === direction) {
+      return true;
     }
-
-    // 1st time
-    if (startRow == 1 || startRow == 6) {
-      // overlapping another piece
-      if (rowDiff > 2) {
-        return false;
-      } else if (rowDiff == 2 && board[(startRow + multi * -2) * 8 + startCol]) {
-        console.log("another piece exist in the path");
-        return false;
-      }
-    } else {
-      if (rowDiff > 1) {
-        return false;
+    // Double step from starting position
+    if (
+      (playerType === PlayerTypes.WHITE && startRow === 6) ||
+      (playerType === PlayerTypes.BLACK && startRow === 1)
+    ) {
+      if (
+        endLocation - startLocation === direction * 2 &&
+        board[startLocation + direction] === Piece.EMPTY
+      ) {
+        return true;
       }
     }
   }
 
-  return true;
+  return false;
 };
 
 const checkRookMoves = (
@@ -57,7 +52,7 @@ const checkRookMoves = (
   board: Array<Piece>
 ) => {
   if (startRow !== endRow && startCol !== endCol) {
-    console.log("trying to go invalid path");
+    // console.log("trying to go invalid path");
     return false;
   }
 
@@ -66,7 +61,7 @@ const checkRookMoves = (
 
   while (tempRow != endRow && tempCol != endCol) {
     if (board[tempRow * 8 + tempCol]) {
-      console.log("overlap with own or other piece");
+      // console.log("overlap with own or other piece");
       return false;
     }
 
@@ -143,7 +138,7 @@ const checkBishopMoves = (
     }
   }
 
-  console.log("could not found any matching end");
+  // console.log("could not found any matching end");
 
   return false;
 };
@@ -180,7 +175,7 @@ const checkQueenMoves = (
     }
   }
 
-  console.log("could not found any matching end");
+  // console.log("could not found any matching end");
 
   return false;
 };
@@ -210,7 +205,7 @@ const checkKingMoves = (
     }
   }
 
-  console.log("could not found any matching end");
+  // console.log("could not found any matching end");
 
   return false;
 };
@@ -219,7 +214,6 @@ export const checkMove = (
   startLocation: number,
   endLocation: number,
   playerType: PlayerTypes,
-  isTryingToCapture: boolean,
   board: Array<Piece>
 ) => {
   const startRow = Math.floor(startLocation / 8);
@@ -230,15 +224,7 @@ export const checkMove = (
   const targetPiece = board[startLocation];
 
   if (targetPiece == Piece.WHITE_PAWN || targetPiece == Piece.BLACK_PAWN) {
-    return checkPawnMoves(
-      startRow,
-      startCol,
-      endRow,
-      endCol,
-      playerType,
-      isTryingToCapture,
-      board
-    );
+    return checkPawnMoves(startLocation, endLocation, playerType, board);
   } else if (
     targetPiece == Piece.WHITE_ROOK ||
     targetPiece == Piece.BLACK_ROOK
