@@ -2,7 +2,22 @@ import { initialChessBoard } from "./constants";
 import { Piece, PlayerTypes, actionTypes } from "./enums";
 import { checkMove } from "./helpers";
 
-export const initialState = {
+interface MoveHistory {
+  from: number;
+  to: number;
+  player: PlayerTypes;
+  capturedPiece: Piece | null;
+}
+
+interface GameState {
+  board: Array<Piece>;
+  currentPlayer: PlayerTypes;
+  selectedLocation: number | null;
+  gameHistory: Array<MoveHistory>;
+  capturedPieces: Array<Piece>;
+}
+
+export const initialState: GameState = {
   board: initialChessBoard,
   currentPlayer: PlayerTypes.WHITE,
   selectedLocation: null,
@@ -55,7 +70,7 @@ export default function gameReducer(state = initialState, action: any) {
 
       const isTryingToCapture = toPiece > 0;
 
-      let capturedPiece;
+      let capturedPiece = null;
 
       const copiedBoard = [...board];
 
@@ -74,6 +89,55 @@ export default function gameReducer(state = initialState, action: any) {
         copiedBoard[selectedLocation] = Piece.EMPTY;
         copiedBoard[targetLocation] = selectedPiece;
 
+        // king checkmate check
+        let opponentPiecesIndexes: Array<Piece> = [];
+        let targetKingIndex = -1;
+
+        copiedBoard?.forEach((piece, index) => {
+          if (
+            currentPlayer === PlayerTypes.WHITE
+              ? piece > 6
+              : piece > 0 && piece < 7
+          ) {
+            opponentPiecesIndexes.push(index);
+          } else if (piece == Piece.BLACK_KING || piece == Piece.WHITE_KING) {
+            targetKingIndex = index;
+          }
+        });
+
+        const isCheckmate = opponentPiecesIndexes.every((index) => {
+          return checkMove(
+            index,
+            targetKingIndex,
+            currentPlayer == PlayerTypes.WHITE
+              ? PlayerTypes.BLACK
+              : PlayerTypes.WHITE,
+            true,
+            board
+          );
+        });
+
+        if (isCheckmate) {
+          console.log("Checkmate");
+          return { ...state, selectedLocation: null };
+        }
+
+        // history save
+
+        const copiedHistory = [...state.gameHistory];
+        copiedHistory.push({
+          from: selectedLocation,
+          to: targetLocation,
+          player: currentPlayer,
+          capturedPiece: capturedPiece,
+        });
+
+        const copiedCapturedPieces = [...state.capturedPieces];
+
+        if (capturedPiece) {
+          copiedCapturedPieces.push(capturedPiece);
+        }
+
         return {
           ...state,
           board: copiedBoard,
@@ -82,6 +146,8 @@ export default function gameReducer(state = initialState, action: any) {
             currentPlayer === PlayerTypes.WHITE
               ? PlayerTypes.BLACK
               : PlayerTypes.WHITE,
+          gameHistory: copiedHistory,
+          capturedPieces: copiedCapturedPieces,
         };
       }
 
