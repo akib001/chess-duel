@@ -24,12 +24,18 @@ const checkPawnMoves = (
       console.log("can not go backward");
       return false;
     }
+
+    if (board[(startRow + multi * -1) * 8 + startCol]) {
+      console.log("another piece exist in the path");
+      return false;
+    }
+
     // 1st time
     if (startRow == 1 || startRow == 6) {
       // overlapping another piece
       if (rowDiff > 2) {
         return false;
-      } else if (board[(startRow + multi * -1) * 8 + startCol]) {
+      } else if (rowDiff == 2 && board[(startRow + multi * -2) * 8 + startCol]) {
         console.log("another piece exist in the path");
         return false;
       }
