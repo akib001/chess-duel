@@ -1,6 +1,6 @@
 import { initialChessBoard } from "./constants";
-import { Piece, PlayerTypes, actionTypes } from "./enums";
-import { checkMove } from "./helpers";
+import { GameStatus, Piece, PlayerTypes, actionTypes } from "./enums";
+import { checkMove, isCheckmate } from "./helpers";
 
 interface MoveHistory {
   from: number;
@@ -15,6 +15,7 @@ interface GameState {
   selectedLocation: number | null;
   gameHistory: Array<MoveHistory>;
   capturedPieces: Array<Piece>;
+  status: GameStatus;
 }
 
 export const initialState: GameState = {
@@ -23,6 +24,7 @@ export const initialState: GameState = {
   selectedLocation: null,
   gameHistory: [],
   capturedPieces: [],
+  status: GameStatus.ONGOING,
 };
 
 export default function gameReducer(state = initialState, action: any) {
@@ -74,14 +76,7 @@ export default function gameReducer(state = initialState, action: any) {
 
       const copiedBoard = [...board];
 
-      if (
-        checkMove(
-          selectedLocation,
-          targetLocation,
-          currentPlayer,
-          board
-        )
-      ) {
+      if (checkMove(selectedLocation, targetLocation, currentPlayer, board)) {
         if (isTryingToCapture) {
           capturedPiece = board[targetLocation];
         }
@@ -104,11 +99,7 @@ export default function gameReducer(state = initialState, action: any) {
           }
         });
 
-        console.log("opponentPiecesIndexes", opponentPiecesIndexes);
-        console.log("targetKingIndex", targetKingIndex);
-
-
-        const isCheckmate = opponentPiecesIndexes.some((index) => {
+        const isKingInCheck = opponentPiecesIndexes.some((index) => {
           return checkMove(
             index,
             targetKingIndex,
@@ -119,10 +110,10 @@ export default function gameReducer(state = initialState, action: any) {
           );
         });
 
-        console.log("isCheckmate", isCheckmate);
+        console.log("isKingInCheck", isKingInCheck);
 
-        if (isCheckmate) {
-          console.log("Checkmate");
+        if (isKingInCheck) {
+          console.log("king will be in check");
           return { ...state, selectedLocation: null };
         }
 
@@ -140,6 +131,18 @@ export default function gameReducer(state = initialState, action: any) {
 
         if (capturedPiece) {
           copiedCapturedPieces.push(capturedPiece);
+        }
+
+        if (isCheckmate(copiedBoard, currentPlayer)) {
+          console.log("checkmate");
+          return {
+            ...state,
+            board: copiedBoard,
+            selectedLocation: null,
+            gameHistory: copiedHistory,
+            capturedPieces: copiedCapturedPieces,
+            status: GameStatus.CHECKMATE,
+          };
         }
 
         return {

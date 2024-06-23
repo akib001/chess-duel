@@ -44,6 +44,13 @@ const checkPawnMoves = (
   return false;
 };
 
+const ROOK_MOVES = [
+  [1, 0],
+  [0, 1],
+  [-1, 0],
+  [0, -1],
+];
+
 const checkRookMoves = (
   startRow: number,
   startCol: number,
@@ -56,23 +63,32 @@ const checkRookMoves = (
     return false;
   }
 
-  let tempRow = startRow;
-  let tempCol = startCol;
+  for (const [row, col] of ROOK_MOVES) {
+    let tempRow = startRow;
+    let tempCol = startCol;
 
-  while (tempRow != endRow && tempCol != endCol) {
-    if (board[tempRow * 8 + tempCol]) {
-      // console.log("overlap with own or other piece");
-      return false;
-    }
+    while (true) {
+      tempRow = tempRow + row;
+      tempCol = tempCol + col;
 
-    if (startRow !== endRow) {
-      tempRow++;
-    } else {
-      tempCol++;
+      // out bound
+      if (tempRow < 0 || tempRow > 7 || tempCol < 0 || tempCol > 7) {
+        break;
+      }
+
+      if (tempRow == endRow && tempCol == endCol) {
+        return true;
+      }
+
+      if (board[tempRow * 8 + tempCol]) {
+        break;
+      }
     }
   }
 
-  return true;
+  // console.log("could not found any matching end");
+
+  return false;
 };
 
 const KNIGHT_MOVES = [
@@ -143,7 +159,7 @@ const checkBishopMoves = (
   return false;
 };
 
-const QUEEN_MOVIES = [...BISHOP_MOVES, [1, 0], [0, 1], [-1, 0], [0, -1]];
+const QUEEN_MOVIES = [...BISHOP_MOVES, ...ROOK_MOVES];
 
 const checkQueenMoves = (
   startRow: number,
@@ -252,3 +268,168 @@ export const checkMove = (
     return checkKingMoves(startRow, startCol, endRow, endCol, board);
   }
 };
+
+export function isCheckmate(
+  board: Array<Piece>,
+  currentPlayer: PlayerTypes
+): boolean {
+  const kingPosition = findKingPosition(board, currentPlayer);
+  if (kingPosition === -1) return false; // King not found, shouldn't happen in a valid game
+
+  // If the king is not in check, it's not checkmate
+  if (!isKingInCheck(board, kingPosition, currentPlayer)) return false;
+
+  // Check if the king can move to a safe square
+  if (canKingMove(board, kingPosition, currentPlayer)) return false;
+
+  // Check if any piece can block the check or capture the attacking piece
+  if (canBlockOrCaptureAttacker(board, kingPosition, currentPlayer))
+    return false;
+
+  // If none of the above conditions are met, it's checkmate
+  return true;
+}
+
+function findKingPosition(board: Array<Piece>, player: PlayerTypes): number {
+  const kingPiece =
+    player === PlayerTypes.WHITE ? Piece.WHITE_KING : Piece.BLACK_KING;
+  return board.findIndex((piece) => piece === kingPiece);
+}
+
+function isKingInCheck(
+  board: Array<Piece>,
+  kingPosition: number,
+  player: PlayerTypes
+): boolean {
+  const oppositePlayer =
+    player === PlayerTypes.WHITE ? PlayerTypes.BLACK : PlayerTypes.WHITE;
+  for (let i = 0; i < 64; i++) {
+    if (
+      board[i] !== Piece.EMPTY &&
+      (player === PlayerTypes.WHITE
+        ? board[i] > 6
+        : board[i] <= 6 && board[i] > 0)
+    ) {
+      if (checkMove(i, kingPosition, oppositePlayer, board)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function canKingMove(
+  board: Array<Piece>,
+  kingPosition: number,
+  player: PlayerTypes
+): boolean {
+  const directions = [-9, -8, -7, -1, 1, 7, 8, 9];
+  for (const direction of directions) {
+    const newPosition = kingPosition + direction;
+    if (
+      newPosition >= 0 &&
+      newPosition < 64 &&
+      Math.abs((kingPosition % 8) - (newPosition % 8)) <= 1
+    ) {
+      if (checkMove(kingPosition, newPosition, player, board)) {
+        const tempBoard = [...board];
+        tempBoard[newPosition] = tempBoard[kingPosition];
+        tempBoard[kingPosition] = Piece.EMPTY;
+        if (!isKingInCheck(tempBoard, newPosition, player)) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
+function canBlockOrCaptureAttacker(
+  board: Array<Piece>,
+  kingPosition: number,
+  player: PlayerTypes
+): boolean {
+  const attackingPositions = findAttackingPieces(board, kingPosition, player);
+
+  for (let i = 0; i < 64; i++) {
+    if (
+      board[i] !== Piece.EMPTY &&
+      (player === PlayerTypes.WHITE
+        ? board[i] > 0 && board[i] < 7
+        : board[i] > 6)
+    ) {
+      for (const attackPos of attackingPositions) {
+        // Check if we can capture the attacker
+        if (checkMove(i, attackPos, player, board)) {
+          const tempBoard = [...board];
+          tempBoard[attackPos] = tempBoard[i];
+          tempBoard[i] = Piece.EMPTY;
+          if (!isKingInCheck(tempBoard, kingPosition, player)) {
+            return true;
+          }
+        }
+
+        // Check if we can block the attack
+        const blockPositions = getPositionsBetween(kingPosition, attackPos);
+        for (const blockPos of blockPositions) {
+          if (checkMove(i, blockPos, player, board)) {
+            const tempBoard = [...board];
+            tempBoard[blockPos] = tempBoard[i];
+            tempBoard[i] = Piece.EMPTY;
+            if (!isKingInCheck(tempBoard, kingPosition, player)) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+  }
+  return false;
+}
+
+function findAttackingPieces(
+  board: Array<Piece>,
+  kingPosition: number,
+  player: PlayerTypes
+): number[] {
+  const attackingPositions = [];
+  const oppositePlayer =
+    player === PlayerTypes.WHITE ? PlayerTypes.BLACK : PlayerTypes.WHITE;
+
+  for (let i = 0; i < 64; i++) {
+    if (
+      board[i] !== Piece.EMPTY &&
+      (player === PlayerTypes.WHITE
+        ? board[i] > 6
+        : board[i] <= 6 && board[i] > 0)
+    ) {
+      if (checkMove(i, kingPosition, oppositePlayer, board)) {
+        attackingPositions.push(i);
+      }
+    }
+  }
+
+  return attackingPositions;
+}
+
+function getPositionsBetween(start: number, end: number): number[] {
+  const positions = [];
+  const startRow = Math.floor(start / 8);
+  const startCol = start % 8;
+  const endRow = Math.floor(end / 8);
+  const endCol = end % 8;
+
+  const rowStep = Math.sign(endRow - startRow);
+  const colStep = Math.sign(endCol - startCol);
+
+  let currentRow = startRow + rowStep;
+  let currentCol = startCol + colStep;
+
+  while (currentRow !== endRow || currentCol !== endCol) {
+    positions.push(currentRow * 8 + currentCol);
+    currentRow += rowStep;
+    currentCol += colStep;
+  }
+
+  return positions;
+}

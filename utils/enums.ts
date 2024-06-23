@@ -23,3 +23,10 @@ export enum actionTypes {
   SELECT_PIECE = "SELECT_PIECE",
   MOVE_PIECE = "MOVE_PIECE",
 }
+
+export enum GameStatus {
+  CHECKMATE = "CHECKMATE",
+  STALEMATE = "STALEMATE",
+  CHECK = "CHECK",
+  ONGOING = "ONGOING",
+}
