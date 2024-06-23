@@ -274,6 +274,7 @@ export function isCheckmate(
   currentPlayer: PlayerTypes
 ): boolean {
   const kingPosition = findKingPosition(board, currentPlayer);
+  
   if (kingPosition === -1) return false; // King not found, shouldn't happen in a valid game
 
   // If the king is not in check, it's not checkmate

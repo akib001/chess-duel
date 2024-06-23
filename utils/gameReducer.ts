@@ -36,7 +36,11 @@ export default function gameReducer(state = initialState, action: any) {
       };
     }
     case actionTypes.MOVE_PIECE: {
-      const { board, selectedLocation, currentPlayer } = state;
+      const { board, selectedLocation, currentPlayer, status } = state;
+
+      if (status !== GameStatus.ONGOING) {
+        return { ...state };
+      }
 
       const targetLocation = action.payload;
 
@@ -133,7 +137,14 @@ export default function gameReducer(state = initialState, action: any) {
           copiedCapturedPieces.push(capturedPiece);
         }
 
-        if (isCheckmate(copiedBoard, currentPlayer)) {
+        if (
+          isCheckmate(
+            copiedBoard,
+            currentPlayer == PlayerTypes.WHITE
+              ? PlayerTypes.BLACK
+              : PlayerTypes.WHITE
+          )
+        ) {
           console.log("checkmate");
           return {
             ...state,
