@@ -56,6 +56,11 @@ export default function gameReducer(state = initialState, action: any) {
         return { ...state, selectedLocation: null };
       }
 
+      // can not capture king piece
+      if (toPiece == Piece.BLACK_KING || toPiece == Piece.WHITE_KING) {
+        return { ...state, selectedLocation: null };
+      }
+
       // can not move more than 1 step
       if (
         currentPlayer == PlayerTypes.BLACK
