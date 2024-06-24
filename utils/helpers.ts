@@ -339,7 +339,10 @@ export function isCheckmate(
   return true;
 }
 
-export function findKingPosition(board: Array<Piece>, player: PlayerTypes): number {
+export function findKingPosition(
+  board: Array<Piece>,
+  player: PlayerTypes
+): number {
   const kingPiece =
     player === PlayerTypes.WHITE ? Piece.WHITE_KING : Piece.BLACK_KING;
   return board.findIndex((piece) => piece === kingPiece);

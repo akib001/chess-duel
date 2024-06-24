@@ -123,5 +123,3 @@ export const SQUARE_VERTICAL_LABEL: Record<number, string> = {
   48: "1",
   56: "0",
 };
-
-// test

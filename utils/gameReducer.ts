@@ -11,10 +11,9 @@ import {
 } from "./helpers";
 
 interface MoveHistory {
-  from: number;
-  to: number;
-  player: PlayerTypes;
-  capturedPiece: Piece | null;
+  movedLocation: number;
+  board: Array<Piece>;
+  isKingInCheck: boolean;
 }
 
 interface GameState {
@@ -95,9 +94,9 @@ export default function gameReducer(state = initialState, action: any) {
         copiedBoard[targetLocation] = selectedPiece;
 
         // king checkmate check
-        const kingPosition = findKingPosition(board, currentPlayer);
+        const kingPosition = findKingPosition(copiedBoard, currentPlayer);
 
-        if (!isKingInCheck(copiedBoard, kingPosition, currentPlayer)) {
+        if (isKingInCheck(copiedBoard, kingPosition, currentPlayer)) {
           console.log("king will be in check");
           return { ...state, selectedLocation: null };
         }
@@ -106,10 +105,9 @@ export default function gameReducer(state = initialState, action: any) {
 
         const copiedHistory = [...state.gameHistory];
         copiedHistory.push({
-          from: selectedLocation,
-          to: targetLocation,
-          player: currentPlayer,
-          capturedPiece: capturedPiece,
+          movedLocation: targetLocation,
+          board: [...copiedBoard],
+          isKingInCheck: false,
         });
 
         const copiedCapturedPieces = [...state.capturedPieces];
