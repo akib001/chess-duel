@@ -102,3 +102,24 @@ export const PIECE_IMAGES = {
   [Piece.BLACK_QUEEN]: "https://assets-themes.chess.com/image/ejgfv/150/bq.png",
   [Piece.BLACK_KING]: "https://assets-themes.chess.com/image/ejgfv/150/bk.png",
 };
+
+export const SQUARE_HORIZONTAL_LABEL: Record<number, string> = {
+  56: "a",
+  57: "b",
+  58: "c",
+  59: "d",
+  60: "e",
+  61: "f",
+  62: "g",
+  63: "h",
+};
+
+export const SQUARE_VERTICAL_LABEL: Record<number, string> = {
+  0: "6",
+  8: "5",
+  16: "4",
+  32: "3",
+  40: "2",
+  48: "1",
+  56: "0",
+};
