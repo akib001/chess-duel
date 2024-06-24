@@ -1,6 +1,12 @@
 import { initialChessBoard } from "./constants";
 import { GameStatus, Piece, PlayerTypes, actionTypes } from "./enums";
-import { checkMove, isCheckmate } from "./helpers";
+import {
+  checkMove,
+  isCheckmate,
+  isOpponentPiece,
+  isPlayerPiece,
+  oppositePlayer,
+} from "./helpers";
 
 interface MoveHistory {
   from: number;
@@ -44,8 +50,10 @@ export default function gameReducer(state = initialState, action: any) {
 
       const targetLocation = action.payload;
 
+      const deSelectInitialState = { ...state, selectedLocation: null };
+
       if (selectedLocation == null || action.payload == null) {
-        return { ...state, selectedLocation: null };
+        return deSelectInitialState;
       }
 
       const selectedPiece = board[selectedLocation];
@@ -53,30 +61,22 @@ export default function gameReducer(state = initialState, action: any) {
 
       // out of board
       if (targetLocation < 0 || targetLocation > 63) {
-        return { ...state, selectedLocation: null };
+        return deSelectInitialState;
       }
 
       // can not capture king piece
       if (toPiece == Piece.BLACK_KING || toPiece == Piece.WHITE_KING) {
-        return { ...state, selectedLocation: null };
+        return deSelectInitialState;
       }
 
       // can not move more than 1 step
-      if (
-        currentPlayer == PlayerTypes.BLACK
-          ? selectedPiece > 0 && selectedPiece < 7
-          : selectedPiece > 6
-      ) {
-        return { ...state, selectedLocation: null };
+      if (isOpponentPiece(currentPlayer, selectedPiece)) {
+        return deSelectInitialState;
       }
 
       // can not capture own piece
-      if (
-        currentPlayer == PlayerTypes.WHITE
-          ? toPiece > 0 && toPiece < 7
-          : toPiece > 6
-      ) {
-        return { ...state, selectedLocation: null };
+      if (isPlayerPiece(currentPlayer, toPiece)) {
+        return deSelectInitialState;
       }
 
       const isTryingToCapture = toPiece > 0;
@@ -97,11 +97,7 @@ export default function gameReducer(state = initialState, action: any) {
         let targetKingIndex = -1;
 
         copiedBoard?.forEach((piece, index) => {
-          if (
-            currentPlayer === PlayerTypes.WHITE
-              ? piece > 6
-              : piece > 0 && piece < 7
-          ) {
+          if (isOpponentPiece(currentPlayer, piece)) {
             opponentPiecesIndexes.push(index);
           } else if (piece == Piece.BLACK_KING || piece == Piece.WHITE_KING) {
             targetKingIndex = index;
@@ -112,9 +108,7 @@ export default function gameReducer(state = initialState, action: any) {
           return checkMove(
             index,
             targetKingIndex,
-            currentPlayer == PlayerTypes.WHITE
-              ? PlayerTypes.BLACK
-              : PlayerTypes.WHITE,
+            oppositePlayer(currentPlayer),
             copiedBoard
           );
         });
@@ -142,14 +136,7 @@ export default function gameReducer(state = initialState, action: any) {
           copiedCapturedPieces.push(capturedPiece);
         }
 
-        if (
-          isCheckmate(
-            copiedBoard,
-            currentPlayer == PlayerTypes.WHITE
-              ? PlayerTypes.BLACK
-              : PlayerTypes.WHITE
-          )
-        ) {
+        if (isCheckmate(copiedBoard, oppositePlayer(currentPlayer))) {
           console.log("checkmate");
           return {
             ...state,
@@ -165,10 +152,7 @@ export default function gameReducer(state = initialState, action: any) {
           ...state,
           board: copiedBoard,
           selectedLocation: null,
-          currentPlayer:
-            currentPlayer === PlayerTypes.WHITE
-              ? PlayerTypes.BLACK
-              : PlayerTypes.WHITE,
+          currentPlayer: oppositePlayer(currentPlayer),
           gameHistory: copiedHistory,
           capturedPieces: copiedCapturedPieces,
         };

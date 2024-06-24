@@ -274,7 +274,7 @@ export function isCheckmate(
   currentPlayer: PlayerTypes
 ): boolean {
   const kingPosition = findKingPosition(board, currentPlayer);
-  
+
   if (kingPosition === -1) return false; // King not found, shouldn't happen in a valid game
 
   // If the king is not in check, it's not checkmate
@@ -305,12 +305,7 @@ function isKingInCheck(
   const oppositePlayer =
     player === PlayerTypes.WHITE ? PlayerTypes.BLACK : PlayerTypes.WHITE;
   for (let i = 0; i < 64; i++) {
-    if (
-      board[i] !== Piece.EMPTY &&
-      (player === PlayerTypes.WHITE
-        ? board[i] > 6
-        : board[i] <= 6 && board[i] > 0)
-    ) {
+    if (board[i] !== Piece.EMPTY && isOpponentPiece(player, board[i])) {
       if (checkMove(i, kingPosition, oppositePlayer, board)) {
         return true;
       }
@@ -353,12 +348,7 @@ function canBlockOrCaptureAttacker(
   const attackingPositions = findAttackingPieces(board, kingPosition, player);
 
   for (let i = 0; i < 64; i++) {
-    if (
-      board[i] !== Piece.EMPTY &&
-      (player === PlayerTypes.WHITE
-        ? board[i] > 0 && board[i] < 7
-        : board[i] > 6)
-    ) {
+    if (board[i] !== Piece.EMPTY && isPlayerPiece(player, board[i])) {
       for (const attackPos of attackingPositions) {
         // Check if we can capture the attacker
         if (checkMove(i, attackPos, player, board)) {
@@ -394,8 +384,6 @@ function findAttackingPieces(
   player: PlayerTypes
 ): number[] {
   const attackingPositions = [];
-  const oppositePlayer =
-    player === PlayerTypes.WHITE ? PlayerTypes.BLACK : PlayerTypes.WHITE;
 
   for (let i = 0; i < 64; i++) {
     if (
@@ -404,7 +392,7 @@ function findAttackingPieces(
         ? board[i] > 6
         : board[i] <= 6 && board[i] > 0)
     ) {
-      if (checkMove(i, kingPosition, oppositePlayer, board)) {
+      if (checkMove(i, kingPosition, oppositePlayer(player), board)) {
         attackingPositions.push(i);
       }
     }
@@ -434,3 +422,18 @@ function getPositionsBetween(start: number, end: number): number[] {
 
   return positions;
 }
+
+export const oppositePlayer = (currentPlayer: PlayerTypes): PlayerTypes =>
+  currentPlayer === PlayerTypes.WHITE ? PlayerTypes.BLACK : PlayerTypes.WHITE;
+
+export const isWhitePiece = (piece: Piece): boolean =>
+  piece >= Piece.WHITE_PAWN && piece <= Piece.WHITE_KING;
+
+export const isBlackPiece = (piece: Piece): boolean =>
+  piece >= Piece.BLACK_PAWN && piece <= Piece.BLACK_KING;
+
+export const isPlayerPiece = (player: PlayerTypes, piece: Piece): boolean =>
+  player === PlayerTypes.WHITE ? isWhitePiece(piece) : isBlackPiece(piece);
+
+export const isOpponentPiece = (player: PlayerTypes, piece: Piece): boolean =>
+  player === PlayerTypes.WHITE ? isBlackPiece(piece) : isWhitePiece(piece);
