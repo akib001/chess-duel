@@ -91,30 +91,14 @@ const checkRookMoves = (
   return false;
 };
 
-const KNIGHT_MOVES = [
-  [-2, -1],
-  [2, 1],
-  [-2, 1],
-  [2, -1],
-  [1, 2],
-  [1, -2],
-  [-1, 2],
-  [-1, -2],
-];
+const KNIGHT_MOVES = [-17, -15, -10, -6, 6, 10, 15, 17];
 
-const checkKnightMoves = (
-  startRow: number,
-  startCol: number,
-  endRow: number,
-  endCol: number
-) => {
-  for (const [row, col] of KNIGHT_MOVES) {
-    if (startRow + row == endRow && startCol + col == endCol) {
-      return true;
-    }
-  }
-
-  return false;
+const checkKnightMoves = (startLocation: number, endLocation: number) => {
+  return KNIGHT_MOVES.some(
+    (move) =>
+      startLocation + move === endLocation &&
+      Math.abs((startLocation % 8) - (endLocation % 8)) <= 2
+  );
 };
 
 const BISHOP_MOVES = [
@@ -196,13 +180,69 @@ const checkQueenMoves = (
   return false;
 };
 
+const checkSlidingPieceMoves = (
+  startLocation: number,
+  endLocation: number,
+  board: Array<Piece>,
+  moves: number[][]
+) => {
+  const startRow = Math.floor(startLocation / 8);
+  const startCol = startLocation % 8;
+  const endRow = Math.floor(endLocation / 8);
+  const endCol = endLocation % 8;
+
+  // initial check
+  const selectedPiece = board[startLocation];
+  if (
+    (selectedPiece == Piece.WHITE_ROOK || selectedPiece == Piece.BLACK_ROOK) &&
+    startRow !== endRow &&
+    startCol !== endCol
+  ) {
+    return false;
+  } else if (
+    (selectedPiece == Piece.WHITE_BISHOP ||
+      selectedPiece == Piece.BLACK_BISHOP) &&
+    Math.abs(startRow - endRow) !== Math.abs(startCol - endCol)
+  ) {
+    return false;
+  }
+
+  for (const [row, col] of moves) {
+    let tempRow = startRow;
+    let tempCol = startCol;
+
+    while (true) {
+      tempRow += row;
+      tempCol += col;
+
+      // out bound
+      if (tempRow < 0 || tempRow > 7 || tempCol < 0 || tempCol > 7) {
+        break;
+      }
+
+      if (tempRow == endRow && tempCol == endCol) {
+        return true;
+      }
+
+      if (board[tempRow * 8 + tempCol]) {
+        break;
+      }
+    }
+  }
+
+  return false;
+};
+
 const checkKingMoves = (
-  startRow: number,
-  startCol: number,
-  endRow: number,
-  endCol: number,
+  startLocation: number,
+  endLocation: number,
   board: Array<Piece>
 ) => {
+  const startRow = Math.floor(startLocation / 8);
+  const startCol = startLocation % 8;
+  const endRow = Math.floor(endLocation / 8);
+  const endCol = endLocation % 8;
+
   for (const [row, col] of QUEEN_MOVIES) {
     let tempRow = startRow + row;
     let tempCol = startCol + col;
@@ -221,8 +261,6 @@ const checkKingMoves = (
     }
   }
 
-  // console.log("could not found any matching end");
-
   return false;
 };
 
@@ -232,11 +270,6 @@ export const checkMove = (
   playerType: PlayerTypes,
   board: Array<Piece>
 ) => {
-  const startRow = Math.floor(startLocation / 8);
-  const startCol = startLocation % 8;
-  const endRow = Math.floor(endLocation / 8);
-  const endCol = endLocation % 8;
-
   const targetPiece = board[startLocation];
 
   if (targetPiece == Piece.WHITE_PAWN || targetPiece == Piece.BLACK_PAWN) {
@@ -245,27 +278,42 @@ export const checkMove = (
     targetPiece == Piece.WHITE_ROOK ||
     targetPiece == Piece.BLACK_ROOK
   ) {
-    return checkRookMoves(startRow, startCol, endRow, endCol, board);
+    return checkSlidingPieceMoves(
+      startLocation,
+      endLocation,
+      board,
+      ROOK_MOVES
+    );
   } else if (
     targetPiece == Piece.WHITE_KNIGHT ||
     targetPiece == Piece.BLACK_KNIGHT
   ) {
-    return checkKnightMoves(startRow, startCol, endRow, endCol);
+    return checkKnightMoves(startLocation, endLocation);
   } else if (
     targetPiece == Piece.WHITE_BISHOP ||
     targetPiece == Piece.BLACK_BISHOP
   ) {
-    return checkBishopMoves(startRow, startCol, endRow, endCol, board);
+    return checkSlidingPieceMoves(
+      startLocation,
+      endLocation,
+      board,
+      BISHOP_MOVES
+    );
   } else if (
     targetPiece == Piece.WHITE_QUEEN ||
     targetPiece == Piece.BLACK_QUEEN
   ) {
-    return checkQueenMoves(startRow, startCol, endRow, endCol, board);
+    return checkSlidingPieceMoves(
+      startLocation,
+      endLocation,
+      board,
+      QUEEN_MOVIES
+    );
   } else if (
     targetPiece == Piece.WHITE_KING ||
     targetPiece == Piece.BLACK_KING
   ) {
-    return checkKingMoves(startRow, startCol, endRow, endCol, board);
+    return checkKingMoves(startLocation, endLocation, board);
   }
 };
 
@@ -291,22 +339,20 @@ export function isCheckmate(
   return true;
 }
 
-function findKingPosition(board: Array<Piece>, player: PlayerTypes): number {
+export function findKingPosition(board: Array<Piece>, player: PlayerTypes): number {
   const kingPiece =
     player === PlayerTypes.WHITE ? Piece.WHITE_KING : Piece.BLACK_KING;
   return board.findIndex((piece) => piece === kingPiece);
 }
 
-function isKingInCheck(
+export function isKingInCheck(
   board: Array<Piece>,
   kingPosition: number,
   player: PlayerTypes
 ): boolean {
-  const oppositePlayer =
-    player === PlayerTypes.WHITE ? PlayerTypes.BLACK : PlayerTypes.WHITE;
   for (let i = 0; i < 64; i++) {
     if (board[i] !== Piece.EMPTY && isOpponentPiece(player, board[i])) {
-      if (checkMove(i, kingPosition, oppositePlayer, board)) {
+      if (checkMove(i, kingPosition, oppositePlayer(player), board)) {
         return true;
       }
     }

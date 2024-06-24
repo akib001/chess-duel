@@ -2,7 +2,9 @@ import { initialChessBoard } from "./constants";
 import { GameStatus, Piece, PlayerTypes, actionTypes } from "./enums";
 import {
   checkMove,
+  findKingPosition,
   isCheckmate,
+  isKingInCheck,
   isOpponentPiece,
   isPlayerPiece,
   oppositePlayer,
@@ -93,29 +95,9 @@ export default function gameReducer(state = initialState, action: any) {
         copiedBoard[targetLocation] = selectedPiece;
 
         // king checkmate check
-        let opponentPiecesIndexes: Array<Piece> = [];
-        let targetKingIndex = -1;
+        const kingPosition = findKingPosition(board, currentPlayer);
 
-        copiedBoard?.forEach((piece, index) => {
-          if (isOpponentPiece(currentPlayer, piece)) {
-            opponentPiecesIndexes.push(index);
-          } else if (piece == Piece.BLACK_KING || piece == Piece.WHITE_KING) {
-            targetKingIndex = index;
-          }
-        });
-
-        const isKingInCheck = opponentPiecesIndexes.some((index) => {
-          return checkMove(
-            index,
-            targetKingIndex,
-            oppositePlayer(currentPlayer),
-            copiedBoard
-          );
-        });
-
-        console.log("isKingInCheck", isKingInCheck);
-
-        if (isKingInCheck) {
+        if (!isKingInCheck(copiedBoard, kingPosition, currentPlayer)) {
           console.log("king will be in check");
           return { ...state, selectedLocation: null };
         }
