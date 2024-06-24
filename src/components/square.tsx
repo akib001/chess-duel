@@ -25,18 +25,6 @@ export default function Square({ index, children, gameState }: SquareProps) {
     return cellColor;
   }, [index]);
 
-  /*
-  startLocation: number,
-  endLocation: number, (this index)
-  playerType: PlayerTypes,
-  isTryingToCapture: boolean,
-  board: Array<Piece>
-
-  available moves:
-  available captures:
-  no style:
-  */
-
   const canMoveCheckerStyle = () => {
     if (selectedLocation == null) {
       return "";
@@ -63,8 +51,8 @@ export default function Square({ index, children, gameState }: SquareProps) {
     let isTryingToCapture =
       board[index] !== PieceEnums.EMPTY
         ? currentPlayer === PlayerTypes.WHITE
-          ? board[index] > 5
-          : board[index] > 0 && board[index] < 6
+          ? board[index] > 6
+          : board[index] > 0 && board[index] < 7
         : false;
 
     if (checkMove(selectedLocation, index, currentPlayer, board)) {

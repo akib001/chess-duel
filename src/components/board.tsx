@@ -1,4 +1,4 @@
-"use client";
+"use client";;
 import { useReducer } from "react";
 import gameReducer, { initialState } from "../../utils/gameReducer";
 import Square from "./square";
@@ -35,13 +35,6 @@ export default function Board() {
         Current Player:{" "}
         {gameState?.currentPlayer == PlayerTypes.WHITE ? "White" : "Black"}
       </div>
-      <div>
-        Moves History:{" "}
-        {gameState?.gameHistory
-          .map((move) => `${move.from} to ${move.to}`)
-          .join(", ")}
-      </div>
-      
       <div className="w-[600px] h-[600px] flex flex-wrap border-2 border-white">
         {gameState?.board.map((item, i) => (
           <Square key={`${item}-${i}`} index={i} gameState={gameState}>
@@ -53,6 +46,7 @@ export default function Board() {
           </Square>
         ))}
       </div>
+      {/* <HistoryTable gameHistory={gameState?.gameHistory} /> */}
     </>
   );
 }
