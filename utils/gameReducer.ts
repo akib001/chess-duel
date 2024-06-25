@@ -102,9 +102,9 @@ export default function gameReducer(state = initialState, action: any) {
           oppositePlayer(currentPlayer)
         );
 
-        const copiedHistory = [...state.gameHistories];
+        const copiedHistories = [...state.gameHistories];
         // TODO: castling, promotion implement later
-        copiedHistory.push({
+        copiedHistories.push({
           from: selectedLocation,
           to: targetLocation,
           piece: selectedPiece,
@@ -129,7 +129,7 @@ export default function gameReducer(state = initialState, action: any) {
             ...state,
             board: copiedBoard,
             selectedLocation: null,
-            gameHistories: { ...copiedHistory, isCheckmate: true },
+            gameHistories: { ...copiedHistories, isCheckmate: true },
             capturedPieces: copiedCapturedPieces,
             status: GameStatus.CHECKMATE,
           };
@@ -140,12 +140,31 @@ export default function gameReducer(state = initialState, action: any) {
           board: copiedBoard,
           selectedLocation: null,
           currentPlayer: oppositePlayer(currentPlayer),
-          gameHistories: copiedHistory,
+          gameHistories: copiedHistories,
           capturedPieces: copiedCapturedPieces,
         };
       }
 
       return { ...state, selectedLocation: null };
+    }
+    case actionTypes.UNDO_MOVE: {
+      const { gameHistories } = state;
+      if (gameHistories.length < 2) {
+        return initialState;
+      }
+
+      const lastMove = gameHistories[gameHistories.length - 2];
+      const copiedBoard = [...lastMove.board];
+      const copiedHistories = [...gameHistories];
+      copiedHistories.pop();
+
+      
+      return {
+        ...state,
+        board: copiedBoard,
+        gameHistories: copiedHistories,
+        currentPlayer: oppositePlayer(state.currentPlayer),
+      };
     }
     default:
       return state;

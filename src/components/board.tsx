@@ -38,11 +38,18 @@ export default function Board() {
     setGameHistoryIndex(index);
   };
 
+  const onClickUndo = () => {
+    dispatch({ type: actionTypes.UNDO_MOVE });
+  };
+
   return (
     <>
       <div>
-        Current Player:{" "}
-        {gameState?.currentPlayer == PlayerTypes.WHITE ? "White" : "Black"}
+        <div>
+          Current Player:{" "}
+          {gameState?.currentPlayer == PlayerTypes.WHITE ? "White" : "Black"}
+        </div>
+        <button onClick={onClickUndo}>Undo</button>
       </div>
       <div className="w-[600px] h-[600px] flex flex-wrap border-2 border-white">
         {(gameHistoryIndex !== null

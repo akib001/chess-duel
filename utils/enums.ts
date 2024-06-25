@@ -22,6 +22,7 @@ export enum PlayerTypes {
 export enum actionTypes {
   SELECT_PIECE = "SELECT_PIECE",
   MOVE_PIECE = "MOVE_PIECE",
+  UNDO_MOVE = "UNDO_MOVE",
 }
 
 export enum GameStatus {
