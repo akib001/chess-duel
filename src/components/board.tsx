@@ -5,13 +5,15 @@ import Square from "./square";
 import Piece from "./piece";
 import { PieceTypes, PlayerTypes, actionTypes } from "../../utils/enums";
 import HistoryTable from "./historyTable";
-import { MoveHistory } from "../../utils/common.interface";
 
 export default function Board() {
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
-  const [board, setBoard] = useState<Array<PieceTypes>>(gameState.board);
+  const [gameHistoryIndex, setGameHistoryIndex] = useState<number | null>(null);
 
   const handlePieceSelection = (index: number) => {
+    if (gameHistoryIndex !== null) {
+      setGameHistoryIndex(null);
+    }
     const selectedLocation = gameState.selectedLocation;
     const currentPlayer = gameState.currentPlayer;
     const selectedPiece = gameState.board[index];
@@ -33,9 +35,7 @@ export default function Board() {
   };
 
   const onChangeHistory = (index: number) => {
-    if (index > 0 || index < gameState.gameHistory.length) {
-      setBoard(gameState.gameHistory[index].board);
-    }
+    setGameHistoryIndex(index);
   };
 
   return (
@@ -45,7 +45,10 @@ export default function Board() {
         {gameState?.currentPlayer == PlayerTypes.WHITE ? "White" : "Black"}
       </div>
       <div className="w-[600px] h-[600px] flex flex-wrap border-2 border-white">
-        {gameState?.board.map((item, i) => (
+        {(gameHistoryIndex !== null
+          ? gameState.gameHistories[gameHistoryIndex]
+          : gameState
+        )?.board.map((item: PieceTypes, i: number) => (
           <Square key={`${item}-${i}`} index={i} gameState={gameState}>
             <Piece
               pieceKey={item}
@@ -56,7 +59,7 @@ export default function Board() {
         ))}
       </div>
       <HistoryTable
-        gameHistory={gameState?.gameHistory}
+        gameHistories={gameState.gameHistories}
         onChangeHistory={onChangeHistory}
       />
     </>

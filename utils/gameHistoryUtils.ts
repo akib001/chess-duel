@@ -1,4 +1,4 @@
-import { GameNotation, MoveHistory } from "./common.interface";
+import { GameNotation, GameHistory } from "./common.interface";
 import { initialChessBoard } from "./constants";
 import { PieceTypes, PlayerTypes } from "./enums";
 import { checkMove } from "./helpers";
@@ -32,7 +32,7 @@ function squareToAlgebraic(square: number): string {
 }
 
 function moveToAlgebraic(
-  move: MoveHistory,
+  move: GameHistory,
   previousBoard: Array<PieceTypes>
 ): string {
   let notation = "";
@@ -92,7 +92,7 @@ function moveToAlgebraic(
 }
 
 export function generateGameNotation(
-  gameHistory: MoveHistory[]
+  gameHistory: GameHistory[]
 ): GameNotation[] {
   let notations = [];
   let moveNumber = 1;

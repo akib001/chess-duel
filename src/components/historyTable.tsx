@@ -1,22 +1,15 @@
-import { MoveHistory } from "../../utils/common.interface";
+import { GameHistory } from "../../utils/common.interface";
 import { generateGameNotation } from "../../utils/gameHistoryUtils";
 
 interface HistoryProps {
-  index: number;
-  gameHistory: MoveHistory[];
-  children: React.ReactNode;
+  gameHistories: Array<GameHistory>;
   onChangeHistory: (index: number) => void;
 }
 
 export default function HistoryTable({
-  gameHistory,
+  gameHistories,
   onChangeHistory,
 }: HistoryProps) {
-  console.log(
-    "gameHistory notation------->",
-    generateGameNotation(gameHistory)
-  );
-
   return (
     <table className="border-collapse table-auto text-sm">
       <caption className="text-slate-500 dark:text-slate-400 pb-4 text-xs caption-top">
@@ -36,7 +29,7 @@ export default function HistoryTable({
         </tr>
       </thead>
       <tbody className="bg-white dark:bg-slate-800">
-        {generateGameNotation(gameHistory)?.map((item, index) => (
+        {generateGameNotation(gameHistories)?.map((item, index) => (
           <tr key={index}>
             <td className="border border-slate-200 dark:border-slate-600 p-2 text-slate-500 dark:text-slate-400">
               {item.serial}

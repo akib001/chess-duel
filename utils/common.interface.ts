@@ -1,6 +1,6 @@
 import { GameStatus, PieceTypes, PlayerTypes } from "./enums";
 
-export interface MoveHistory {
+export interface GameHistory {
   from: number;
   to: number;
   piece: PieceTypes;
@@ -17,7 +17,7 @@ export interface GameState {
   board: Array<PieceTypes>;
   currentPlayer: PlayerTypes;
   selectedLocation: number | null;
-  gameHistory: Array<MoveHistory>;
+  gameHistories: GameHistory[];
   capturedPieces: Array<PieceTypes>;
   status: GameStatus;
 }

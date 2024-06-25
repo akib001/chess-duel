@@ -1,4 +1,4 @@
-import { GameState, MoveHistory } from "./common.interface";
+import { GameState } from "./common.interface";
 import { initialChessBoard } from "./constants";
 import { GameStatus, PieceTypes, PlayerTypes, actionTypes } from "./enums";
 import {
@@ -11,14 +11,11 @@ import {
   oppositePlayer,
 } from "./helpers";
 
-
-
-
 export const initialState: GameState = {
   board: initialChessBoard,
   currentPlayer: PlayerTypes.WHITE,
   selectedLocation: null,
-  gameHistory: [],
+  gameHistories: [],
   capturedPieces: [],
   status: GameStatus.ONGOING,
 };
@@ -55,7 +52,10 @@ export default function gameReducer(state = initialState, action: any) {
       }
 
       // can not capture king piece
-      if (toPiece == PieceTypes.BLACK_KING || toPiece == PieceTypes.WHITE_KING) {
+      if (
+        toPiece == PieceTypes.BLACK_KING ||
+        toPiece == PieceTypes.WHITE_KING
+      ) {
         return deSelectInitialState;
       }
 
@@ -102,7 +102,7 @@ export default function gameReducer(state = initialState, action: any) {
           oppositePlayer(currentPlayer)
         );
 
-        const copiedHistory = [...state.gameHistory];
+        const copiedHistory = [...state.gameHistories];
         // TODO: castling, promotion implement later
         copiedHistory.push({
           from: selectedLocation,
@@ -129,7 +129,7 @@ export default function gameReducer(state = initialState, action: any) {
             ...state,
             board: copiedBoard,
             selectedLocation: null,
-            gameHistory: { ...copiedHistory, isCheckmate: true },
+            gameHistories: { ...copiedHistory, isCheckmate: true },
             capturedPieces: copiedCapturedPieces,
             status: GameStatus.CHECKMATE,
           };
@@ -140,7 +140,7 @@ export default function gameReducer(state = initialState, action: any) {
           board: copiedBoard,
           selectedLocation: null,
           currentPlayer: oppositePlayer(currentPlayer),
-          gameHistory: copiedHistory,
+          gameHistories: copiedHistory,
           capturedPieces: copiedCapturedPieces,
         };
       }
