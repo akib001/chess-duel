@@ -1,6 +1,6 @@
 import React from "react";
 import { checkMove } from "../../utils/helpers";
-import { Piece as PieceEnums, PlayerTypes } from "../../utils/enums";
+import { PieceTypes, PlayerTypes } from "../../utils/enums";
 import {
   SQUARE_HORIZONTAL_LABEL,
   SQUARE_VERTICAL_LABEL,
@@ -49,7 +49,7 @@ export default function Square({ index, children, gameState }: SquareProps) {
     }
 
     let isTryingToCapture =
-      board[index] !== PieceEnums.EMPTY
+      board[index] !== PieceTypes.EMPTY
         ? currentPlayer === PlayerTypes.WHITE
           ? board[index] > 6
           : board[index] > 0 && board[index] < 7

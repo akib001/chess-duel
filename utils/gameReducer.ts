@@ -1,5 +1,6 @@
+import { GameState, MoveHistory } from "./common.interface";
 import { initialChessBoard } from "./constants";
-import { GameStatus, Piece, PlayerTypes, actionTypes } from "./enums";
+import { GameStatus, PieceTypes, PlayerTypes, actionTypes } from "./enums";
 import {
   checkMove,
   findKingPosition,
@@ -10,20 +11,8 @@ import {
   oppositePlayer,
 } from "./helpers";
 
-interface MoveHistory {
-  movedLocation: number;
-  board: Array<Piece>;
-  isKingInCheck: boolean;
-}
 
-interface GameState {
-  board: Array<Piece>;
-  currentPlayer: PlayerTypes;
-  selectedLocation: number | null;
-  gameHistory: Array<MoveHistory>;
-  capturedPieces: Array<Piece>;
-  status: GameStatus;
-}
+
 
 export const initialState: GameState = {
   board: initialChessBoard,
@@ -66,7 +55,7 @@ export default function gameReducer(state = initialState, action: any) {
       }
 
       // can not capture king piece
-      if (toPiece == Piece.BLACK_KING || toPiece == Piece.WHITE_KING) {
+      if (toPiece == PieceTypes.BLACK_KING || toPiece == PieceTypes.WHITE_KING) {
         return deSelectInitialState;
       }
 
@@ -90,7 +79,7 @@ export default function gameReducer(state = initialState, action: any) {
         if (isTryingToCapture) {
           capturedPiece = board[targetLocation];
         }
-        copiedBoard[selectedLocation] = Piece.EMPTY;
+        copiedBoard[selectedLocation] = PieceTypes.EMPTY;
         copiedBoard[targetLocation] = selectedPiece;
 
         // king checkmate check
@@ -103,11 +92,29 @@ export default function gameReducer(state = initialState, action: any) {
 
         // history save
 
+        const oppositePlayerKingPosition = findKingPosition(
+          copiedBoard,
+          oppositePlayer(currentPlayer)
+        );
+        const isCheck = isKingInCheck(
+          copiedBoard,
+          oppositePlayerKingPosition,
+          oppositePlayer(currentPlayer)
+        );
+
         const copiedHistory = [...state.gameHistory];
+        // TODO: castling, promotion implement later
         copiedHistory.push({
-          movedLocation: targetLocation,
+          from: selectedLocation,
+          to: targetLocation,
+          piece: selectedPiece,
+          capturedPiece: capturedPiece,
+          isCheck: isCheck,
+          isCheckmate: false,
+          isCastling: false,
+          isPromotion: false,
+          promotedTo: undefined,
           board: [...copiedBoard],
-          isKingInCheck: false,
         });
 
         const copiedCapturedPieces = [...state.capturedPieces];
@@ -122,7 +129,7 @@ export default function gameReducer(state = initialState, action: any) {
             ...state,
             board: copiedBoard,
             selectedLocation: null,
-            gameHistory: copiedHistory,
+            gameHistory: { ...copiedHistory, isCheckmate: true },
             capturedPieces: copiedCapturedPieces,
             status: GameStatus.CHECKMATE,
           };

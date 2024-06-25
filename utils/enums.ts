@@ -1,4 +1,4 @@
-export enum Piece {
+export enum PieceTypes {
   EMPTY = 0,
   WHITE_PAWN = 1,
   WHITE_KNIGHT = 2,

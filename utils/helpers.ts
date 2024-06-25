@@ -1,10 +1,10 @@
-import { Piece, PlayerTypes } from "./enums";
+import { PieceTypes, PlayerTypes } from "./enums";
 
 const checkPawnMoves = (
   startLocation: number,
   endLocation: number,
   playerType: PlayerTypes,
-  board: Array<Piece>
+  board: Array<PieceTypes>
 ) => {
   const direction = playerType === PlayerTypes.WHITE ? -8 : 8;
   const startRow = Math.floor(startLocation / 8);
@@ -14,7 +14,7 @@ const checkPawnMoves = (
 
   // Capture moves
   if (
-    board[endLocation] !== Piece.EMPTY &&
+    board[endLocation] !== PieceTypes.EMPTY &&
     Math.abs(startCol - endCol) === 1 &&
     endRow - startRow === direction / 8
   ) {
@@ -22,7 +22,7 @@ const checkPawnMoves = (
   }
 
   // Forward moves
-  if (board[endLocation] === Piece.EMPTY && startCol === endCol) {
+  if (board[endLocation] === PieceTypes.EMPTY && startCol === endCol) {
     // Single step forward
     if (endLocation - startLocation === direction) {
       return true;
@@ -34,7 +34,7 @@ const checkPawnMoves = (
     ) {
       if (
         endLocation - startLocation === direction * 2 &&
-        board[startLocation + direction] === Piece.EMPTY
+        board[startLocation + direction] === PieceTypes.EMPTY
       ) {
         return true;
       }
@@ -56,7 +56,7 @@ const checkRookMoves = (
   startCol: number,
   endRow: number,
   endCol: number,
-  board: Array<Piece>
+  board: Array<PieceTypes>
 ) => {
   if (startRow !== endRow && startCol !== endCol) {
     // console.log("trying to go invalid path");
@@ -113,7 +113,7 @@ const checkBishopMoves = (
   startCol: number,
   endRow: number,
   endCol: number,
-  board: Array<Piece>
+  board: Array<PieceTypes>
 ) => {
   for (const [row, col] of BISHOP_MOVES) {
     let tempRow = startRow;
@@ -150,7 +150,7 @@ const checkQueenMoves = (
   startCol: number,
   endRow: number,
   endCol: number,
-  board: Array<Piece>
+  board: Array<PieceTypes>
 ) => {
   for (const [row, col] of QUEEN_MOVIES) {
     let tempRow = startRow;
@@ -183,7 +183,7 @@ const checkQueenMoves = (
 const checkSlidingPieceMoves = (
   startLocation: number,
   endLocation: number,
-  board: Array<Piece>,
+  board: Array<PieceTypes>,
   moves: number[][]
 ) => {
   const startRow = Math.floor(startLocation / 8);
@@ -194,14 +194,14 @@ const checkSlidingPieceMoves = (
   // initial check
   const selectedPiece = board[startLocation];
   if (
-    (selectedPiece == Piece.WHITE_ROOK || selectedPiece == Piece.BLACK_ROOK) &&
+    (selectedPiece == PieceTypes.WHITE_ROOK || selectedPiece == PieceTypes.BLACK_ROOK) &&
     startRow !== endRow &&
     startCol !== endCol
   ) {
     return false;
   } else if (
-    (selectedPiece == Piece.WHITE_BISHOP ||
-      selectedPiece == Piece.BLACK_BISHOP) &&
+    (selectedPiece == PieceTypes.WHITE_BISHOP ||
+      selectedPiece == PieceTypes.BLACK_BISHOP) &&
     Math.abs(startRow - endRow) !== Math.abs(startCol - endCol)
   ) {
     return false;
@@ -236,7 +236,7 @@ const checkSlidingPieceMoves = (
 const checkKingMoves = (
   startLocation: number,
   endLocation: number,
-  board: Array<Piece>
+  board: Array<PieceTypes>
 ) => {
   const startRow = Math.floor(startLocation / 8);
   const startCol = startLocation % 8;
@@ -268,15 +268,15 @@ export const checkMove = (
   startLocation: number,
   endLocation: number,
   playerType: PlayerTypes,
-  board: Array<Piece>
+  board: Array<PieceTypes>
 ) => {
   const targetPiece = board[startLocation];
 
-  if (targetPiece == Piece.WHITE_PAWN || targetPiece == Piece.BLACK_PAWN) {
+  if (targetPiece == PieceTypes.WHITE_PAWN || targetPiece == PieceTypes.BLACK_PAWN) {
     return checkPawnMoves(startLocation, endLocation, playerType, board);
   } else if (
-    targetPiece == Piece.WHITE_ROOK ||
-    targetPiece == Piece.BLACK_ROOK
+    targetPiece == PieceTypes.WHITE_ROOK ||
+    targetPiece == PieceTypes.BLACK_ROOK
   ) {
     return checkSlidingPieceMoves(
       startLocation,
@@ -285,13 +285,13 @@ export const checkMove = (
       ROOK_MOVES
     );
   } else if (
-    targetPiece == Piece.WHITE_KNIGHT ||
-    targetPiece == Piece.BLACK_KNIGHT
+    targetPiece == PieceTypes.WHITE_KNIGHT ||
+    targetPiece == PieceTypes.BLACK_KNIGHT
   ) {
     return checkKnightMoves(startLocation, endLocation);
   } else if (
-    targetPiece == Piece.WHITE_BISHOP ||
-    targetPiece == Piece.BLACK_BISHOP
+    targetPiece == PieceTypes.WHITE_BISHOP ||
+    targetPiece == PieceTypes.BLACK_BISHOP
   ) {
     return checkSlidingPieceMoves(
       startLocation,
@@ -300,8 +300,8 @@ export const checkMove = (
       BISHOP_MOVES
     );
   } else if (
-    targetPiece == Piece.WHITE_QUEEN ||
-    targetPiece == Piece.BLACK_QUEEN
+    targetPiece == PieceTypes.WHITE_QUEEN ||
+    targetPiece == PieceTypes.BLACK_QUEEN
   ) {
     return checkSlidingPieceMoves(
       startLocation,
@@ -310,15 +310,15 @@ export const checkMove = (
       QUEEN_MOVIES
     );
   } else if (
-    targetPiece == Piece.WHITE_KING ||
-    targetPiece == Piece.BLACK_KING
+    targetPiece == PieceTypes.WHITE_KING ||
+    targetPiece == PieceTypes.BLACK_KING
   ) {
     return checkKingMoves(startLocation, endLocation, board);
   }
 };
 
 export function isCheckmate(
-  board: Array<Piece>,
+  board: Array<PieceTypes>,
   currentPlayer: PlayerTypes
 ): boolean {
   const kingPosition = findKingPosition(board, currentPlayer);
@@ -340,21 +340,21 @@ export function isCheckmate(
 }
 
 export function findKingPosition(
-  board: Array<Piece>,
+  board: Array<PieceTypes>,
   player: PlayerTypes
 ): number {
   const kingPiece =
-    player === PlayerTypes.WHITE ? Piece.WHITE_KING : Piece.BLACK_KING;
+    player === PlayerTypes.WHITE ? PieceTypes.WHITE_KING : PieceTypes.BLACK_KING;
   return board.findIndex((piece) => piece === kingPiece);
 }
 
 export function isKingInCheck(
-  board: Array<Piece>,
+  board: Array<PieceTypes>,
   kingPosition: number,
   player: PlayerTypes
 ): boolean {
   for (let i = 0; i < 64; i++) {
-    if (board[i] !== Piece.EMPTY && isOpponentPiece(player, board[i])) {
+    if (board[i] !== PieceTypes.EMPTY && isOpponentPiece(player, board[i])) {
       if (checkMove(i, kingPosition, oppositePlayer(player), board)) {
         return true;
       }
@@ -364,7 +364,7 @@ export function isKingInCheck(
 }
 
 function canKingMove(
-  board: Array<Piece>,
+  board: Array<PieceTypes>,
   kingPosition: number,
   player: PlayerTypes
 ): boolean {
@@ -379,7 +379,7 @@ function canKingMove(
       if (checkMove(kingPosition, newPosition, player, board)) {
         const tempBoard = [...board];
         tempBoard[newPosition] = tempBoard[kingPosition];
-        tempBoard[kingPosition] = Piece.EMPTY;
+        tempBoard[kingPosition] = PieceTypes.EMPTY;
         if (!isKingInCheck(tempBoard, newPosition, player)) {
           return true;
         }
@@ -390,20 +390,20 @@ function canKingMove(
 }
 
 function canBlockOrCaptureAttacker(
-  board: Array<Piece>,
+  board: Array<PieceTypes>,
   kingPosition: number,
   player: PlayerTypes
 ): boolean {
   const attackingPositions = findAttackingPieces(board, kingPosition, player);
 
   for (let i = 0; i < 64; i++) {
-    if (board[i] !== Piece.EMPTY && isPlayerPiece(player, board[i])) {
+    if (board[i] !== PieceTypes.EMPTY && isPlayerPiece(player, board[i])) {
       for (const attackPos of attackingPositions) {
         // Check if we can capture the attacker
         if (checkMove(i, attackPos, player, board)) {
           const tempBoard = [...board];
           tempBoard[attackPos] = tempBoard[i];
-          tempBoard[i] = Piece.EMPTY;
+          tempBoard[i] = PieceTypes.EMPTY;
           if (!isKingInCheck(tempBoard, kingPosition, player)) {
             return true;
           }
@@ -415,7 +415,7 @@ function canBlockOrCaptureAttacker(
           if (checkMove(i, blockPos, player, board)) {
             const tempBoard = [...board];
             tempBoard[blockPos] = tempBoard[i];
-            tempBoard[i] = Piece.EMPTY;
+            tempBoard[i] = PieceTypes.EMPTY;
             if (!isKingInCheck(tempBoard, kingPosition, player)) {
               return true;
             }
@@ -428,7 +428,7 @@ function canBlockOrCaptureAttacker(
 }
 
 function findAttackingPieces(
-  board: Array<Piece>,
+  board: Array<PieceTypes>,
   kingPosition: number,
   player: PlayerTypes
 ): number[] {
@@ -436,7 +436,7 @@ function findAttackingPieces(
 
   for (let i = 0; i < 64; i++) {
     if (
-      board[i] !== Piece.EMPTY &&
+      board[i] !== PieceTypes.EMPTY &&
       (player === PlayerTypes.WHITE
         ? board[i] > 6
         : board[i] <= 6 && board[i] > 0)
@@ -475,14 +475,14 @@ function getPositionsBetween(start: number, end: number): number[] {
 export const oppositePlayer = (currentPlayer: PlayerTypes): PlayerTypes =>
   currentPlayer === PlayerTypes.WHITE ? PlayerTypes.BLACK : PlayerTypes.WHITE;
 
-export const isWhitePiece = (piece: Piece): boolean =>
-  piece >= Piece.WHITE_PAWN && piece <= Piece.WHITE_KING;
+export const isWhitePiece = (piece: PieceTypes): boolean =>
+  piece >= PieceTypes.WHITE_PAWN && piece <= PieceTypes.WHITE_KING;
 
-export const isBlackPiece = (piece: Piece): boolean =>
-  piece >= Piece.BLACK_PAWN && piece <= Piece.BLACK_KING;
+export const isBlackPiece = (piece: PieceTypes): boolean =>
+  piece >= PieceTypes.BLACK_PAWN && piece <= PieceTypes.BLACK_KING;
 
-export const isPlayerPiece = (player: PlayerTypes, piece: Piece): boolean =>
+export const isPlayerPiece = (player: PlayerTypes, piece: PieceTypes): boolean =>
   player === PlayerTypes.WHITE ? isWhitePiece(piece) : isBlackPiece(piece);
 
-export const isOpponentPiece = (player: PlayerTypes, piece: Piece): boolean =>
+export const isOpponentPiece = (player: PlayerTypes, piece: PieceTypes): boolean =>
   player === PlayerTypes.WHITE ? isBlackPiece(piece) : isWhitePiece(piece);

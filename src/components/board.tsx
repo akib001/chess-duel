@@ -1,12 +1,15 @@
-"use client";;
-import { useReducer } from "react";
+"use client";
+import { useReducer, useState } from "react";
 import gameReducer, { initialState } from "../../utils/gameReducer";
 import Square from "./square";
 import Piece from "./piece";
-import { PlayerTypes, actionTypes } from "../../utils/enums";
+import { PieceTypes, PlayerTypes, actionTypes } from "../../utils/enums";
+import HistoryTable from "./historyTable";
+import { MoveHistory } from "../../utils/common.interface";
 
 export default function Board() {
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
+  const [board, setBoard] = useState<Array<PieceTypes>>(gameState.board);
 
   const handlePieceSelection = (index: number) => {
     const selectedLocation = gameState.selectedLocation;
@@ -29,6 +32,12 @@ export default function Board() {
     }
   };
 
+  const onChangeHistory = (index: number) => {
+    if (index > 0 || index < gameState.gameHistory.length) {
+      setBoard(gameState.gameHistory[index].board);
+    }
+  };
+
   return (
     <>
       <div>
@@ -46,7 +55,10 @@ export default function Board() {
           </Square>
         ))}
       </div>
-      {/* <HistoryTable gameHistory={gameState?.gameHistory} /> */}
+      <HistoryTable
+        gameHistory={gameState?.gameHistory}
+        onChangeHistory={onChangeHistory}
+      />
     </>
   );
 }

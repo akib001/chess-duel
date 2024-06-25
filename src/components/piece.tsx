@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { PIECE_IMAGES } from "../../utils/constants";
-import { Piece as PieceEnums } from "../../utils/enums";
+import { PieceTypes} from "../../utils/enums";
 
 interface IPiece {
-  pieceKey: PieceEnums;
+  pieceKey: PieceTypes;
   index: number;
   onSelectedPiece: any;
 }
