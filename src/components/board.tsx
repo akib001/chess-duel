@@ -13,6 +13,7 @@ export default function Board() {
   const handlePieceSelection = (index: number) => {
     if (gameHistoryIndex !== null) {
       setGameHistoryIndex(null);
+      return;
     }
     const selectedLocation = gameState.selectedLocation;
     const currentPlayer = gameState.currentPlayer;
@@ -39,6 +40,10 @@ export default function Board() {
   };
 
   const onClickUndo = () => {
+    if (gameHistoryIndex !== null) {
+      setGameHistoryIndex(null);
+      return;
+    }
     dispatch({ type: actionTypes.UNDO_MOVE });
   };
 
