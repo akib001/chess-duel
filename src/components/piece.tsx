@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { PIECE_IMAGES } from "../../utils/constants";
-import { PieceTypes} from "../../utils/enums";
+import { PieceTypes } from "../../utils/enums";
 
 interface IPiece {
   pieceKey: PieceTypes;
@@ -9,93 +9,45 @@ interface IPiece {
 }
 
 export default function Piece({ pieceKey, index, onSelectedPiece }: IPiece) {
-  // const checkPawnMoves = (
-  //   startRow: number,
-  //   startCol: number,
-  //   endRow: number,
-  //   endCol: number,
-  //   playerType: number,
-  //   isTryingToCapture = false
-  // ) => {
-  //   const multi = playerType == 0 ? -1 : 1;
+  const onDragStart = (e) => {
+    const img = new Image();
+    img.src = PIECE_IMAGES[pieceKey];``
+    e.dataTransfer.setDragImage(img, 32, 32);
+    console.log("drag start", index);
+    e.dataTransfer.setData("text/plain", index);
+    e.dataTransfer.effectAllowed = "move";
+    onSelectedPiece(index);
+  };
 
-  //   let rowDiff = multi * (startRow - endRow);
-  //   let colDiff = Math.abs(startCol - endCol);
+  const onDragOver = (e) => {
+    e.preventDefault();
+  };
 
-  //   if (isTryingToCapture && colDiff == 1 && rowDiff == 1) {
-  //     return true;
-  //   } else if (colDiff > 0) {
-  //     console.log("can not go horizontal");
-  //     return false;
-  //   } else {
-  //     if (rowDiff < 0) {
-  //       console.log("can not go backward");
-  //       return false;
-  //     }
-  //     // 1st time
-  //     if (startRow == 1 || startRow == 6) {
-  //       // overlapping another piece
-  //       if (rowDiff > 2) {
-  //         return false;
-  //       } else if (board[startRow + multi * -1][startCol]) {
-  //         console.log("another piece exist in the path");
-  //         return false;
-  //       }
-  //     } else {
-  //       if (rowDiff > 1) {
-  //         return false;
-  //       }
-  //     }
-  //   }
+  const onDrop = (e) => {
+    console.log("on Drop index", index);
+    e.preventDefault();
 
-  //   return true;
-  // };
-
-  // const pieceSelectHandler = () => {
-  //   if (selectedPiece === null) {
-  //     onSelectedPiece([x, y]);
-  //   } else {
-  //     if (
-  //       checkPawnMoves(
-  //         selectedPiece[0],
-  //         selectedPiece[1],
-  //         x,
-  //         y,
-  //         board[selectedPiece[0]][selectedPiece[1]][0] == "w" ? 0 : 1
-  //       )
-  //     ) {
-  //       const newBoard = board.map((row) => [...row]);
-  //       newBoard[x][y] = board[selectedPiece[0]][selectedPiece[1]];
-  //       newBoard[selectedPiece[0]][selectedPiece[1]] = "";
-  //       setBoard(newBoard);
-  //     }
-  //     onSelectedPiece(null);
-  //   }
-  // };
-
-  // ${
-  //   selectedPiece && selectedPiece[0] == x && selectedPiece[1] == y
-  //     ? "bg-slate-600"
-  //     : ""
-  // }
+    onSelectedPiece(index);
+    const draggedIndex = parseInt(e.dataTransfer.getData("text/plain"), 10);
+  };
 
   return (
     <>
-      {pieceKey ? (
-        <Image
-          src={PIECE_IMAGES[pieceKey]}
-          width={64}
-          height={64}
-          alt={"chess piece"}
-          className="cursor-pointer"
-          onClick={() => onSelectedPiece(index)}
-        />
-      ) : (
-        <div
-          className="w-16 h-16 cursor-pointer"
-          onClick={() => onSelectedPiece(index)}
-        ></div>
-      )}
+      <div
+        className="w-16 h-16 cursor-pointer bg-no-repeat bg-center"
+        style={{
+          backgroundImage: pieceKey ? `url(${PIECE_IMAGES[pieceKey]})` : "none",
+          backgroundSize: "64px 64px",
+        }}
+        onClick={() => {
+          console.log("onClick");
+          onSelectedPiece(index);
+        }}
+        draggable={!!pieceKey}
+        onDragStart={(e) => pieceKey && onDragStart(e)}
+        onDragOver={(e) => onDragOver(e)}
+        onDrop={(e) => onDrop(e)}
+      ></div>
     </>
   );
 }
