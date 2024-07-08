@@ -486,3 +486,5 @@ export const isPlayerPiece = (player: PlayerTypes, piece: PieceTypes): boolean =
 
 export const isOpponentPiece = (player: PlayerTypes, piece: PieceTypes): boolean =>
   player === PlayerTypes.WHITE ? isBlackPiece(piece) : isWhitePiece(piece);
+
+

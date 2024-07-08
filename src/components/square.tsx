@@ -16,6 +16,9 @@ interface SquareProps {
 export default function Square({ index, children, gameState }: SquareProps) {
   const { isOver, setNodeRef } = useDroppable({
     id: `droppable-${index}`,
+    data: {
+      index,
+    },
   });
 
   const { selectedLocation, currentPlayer, board } = gameState;
@@ -67,6 +70,7 @@ export default function Square({ index, children, gameState }: SquareProps) {
     }
   };
 
+
   return (
     <div
       ref={setNodeRef}
@@ -75,7 +79,7 @@ export default function Square({ index, children, gameState }: SquareProps) {
         selectedLocation === index
           ? "outline outline-4 outline-offset-[-4px] outline-blue-500"
           : ""
-      } ${canMoveCheckerStyle()}`}
+      } ${canMoveCheckerStyle()} ${isOver ? "opacity-50" : ""}`}
     >
       <p className="bg-green-300 text-xs absolute top-0 right-1">{index}</p>
       {SQUARE_VERTICAL_LABEL[index] && (

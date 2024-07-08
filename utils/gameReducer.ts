@@ -29,13 +29,14 @@ export default function gameReducer(state = initialState, action: any) {
       };
     }
     case actionTypes.MOVE_PIECE: {
-      const { board, selectedLocation, currentPlayer, status } = state;
+      const { board, currentPlayer, status } = state;
 
       if (status !== GameStatus.ONGOING) {
         return { ...state };
       }
 
-      const targetLocation = action.payload;
+      const { startIndex: selectedLocation, endIndex: targetLocation } =
+        action.payload;
 
       const deSelectInitialState = { ...state, selectedLocation: null };
 
@@ -158,7 +159,6 @@ export default function gameReducer(state = initialState, action: any) {
       const copiedHistories = [...gameHistories];
       copiedHistories.pop();
 
-      
       return {
         ...state,
         board: copiedBoard,
