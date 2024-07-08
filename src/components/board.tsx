@@ -5,6 +5,7 @@ import Square from "./square";
 import Piece from "./piece";
 import { PieceTypes, PlayerTypes, actionTypes } from "../../utils/enums";
 import HistoryTable from "./historyTable";
+import { DndContext } from "@dnd-kit/core";
 
 export default function Board() {
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
@@ -48,7 +49,7 @@ export default function Board() {
   };
 
   return (
-    <>
+    <DndContext>
       <div>
         <div>
           Current Player:{" "}
@@ -74,6 +75,6 @@ export default function Board() {
         gameHistories={gameState.gameHistories}
         onChangeHistory={onChangeHistory}
       />
-    </>
+    </DndContext>
   );
 }

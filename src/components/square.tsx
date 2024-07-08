@@ -5,6 +5,7 @@ import {
   SQUARE_HORIZONTAL_LABEL,
   SQUARE_VERTICAL_LABEL,
 } from "../../utils/constants";
+import { useDroppable } from "@dnd-kit/core";
 
 interface SquareProps {
   index: number;
@@ -13,6 +14,10 @@ interface SquareProps {
 }
 
 export default function Square({ index, children, gameState }: SquareProps) {
+  const { isOver, setNodeRef } = useDroppable({
+    id: `droppable-${index}`,
+  });
+
   const { selectedLocation, currentPlayer, board } = gameState;
 
   const getCellColor = React.useMemo(() => {
@@ -64,6 +69,7 @@ export default function Square({ index, children, gameState }: SquareProps) {
 
   return (
     <div
+      ref={setNodeRef}
       className={`w-[12.5%] relative flex justify-center items-center 
       ${getCellColor}  ${
         selectedLocation === index
