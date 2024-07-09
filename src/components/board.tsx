@@ -65,11 +65,8 @@ export default function Board() {
     ) {
       // move by isClick
       // move piece
-      if (
-        (currentPlayer === PlayerTypes.WHITE && dragEndPiece) ||
-        (currentPlayer == PlayerTypes.BLACK && dragEndPiece)
-      ) {
-        // selecting another piece
+      if (isPlayerPiece(currentPlayer, dragEndPiece)) {
+        // selecting another own piece
         dispatch({ type: actionTypes.SELECT_PIECE, payload: endDragIndex });
         return;
       }
