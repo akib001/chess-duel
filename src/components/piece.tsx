@@ -22,18 +22,16 @@ export default function Piece({ pieceKey, index }: IPiece) {
   };
 
   return (
-    <>
-      <div
-        className="w-16 h-16 cursor-pointer bg-no-repeat bg-center"
-        ref={setNodeRef}
-        {...listeners}
-        {...attributes}
-        style={{
-          ...style,
-          backgroundImage: pieceKey ? `url(${PIECE_IMAGES[pieceKey]})` : "none",
-          backgroundSize: "64px 64px",
-        }}
-      ></div>
-    </>
+    <div
+      className="w-16 h-16 cursor-pointer bg-no-repeat bg-center"
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      style={{
+        ...style,
+        backgroundImage: pieceKey ? `url(${PIECE_IMAGES[pieceKey]})` : "none",
+        backgroundSize: "64px 64px",
+      }}
+    ></div>
   );
 }

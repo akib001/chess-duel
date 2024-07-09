@@ -5,7 +5,7 @@ import Square from "./square";
 import Piece from "./piece";
 import { PieceTypes, PlayerTypes, actionTypes } from "../../utils/enums";
 import { DndContext, DragEndEvent, DragStartEvent } from "@dnd-kit/core";
-import { isBlackPiece, isPlayerPiece, isWhitePiece } from "../../utils/helpers";
+import { isPlayerPiece } from "../../utils/helpers";
 import HistoryTable from "./historyTable";
 
 export default function Board() {
@@ -26,6 +26,7 @@ export default function Board() {
 
   const handleDragStart = (e: DragStartEvent) => {
     const index = e.active.data?.current?.index;
+    console.log("drag start", index);
     if (index === undefined) return;
   };
 
@@ -36,10 +37,13 @@ export default function Board() {
       return;
     }
 
+    console.log("drag end", endDragIndex);
+
     const currentPlayer = gameState.currentPlayer;
     const selectedLocation = gameState.selectedLocation;
     const selectedPiece = gameState.board[selectedLocation];
     const isClick = startDragIndex == endDragIndex;
+    const dragEndPiece = gameState.board[endDragIndex];
 
     if (selectedLocation == null && isClick) {
       dispatch({ type: actionTypes.SELECT_PIECE, payload: endDragIndex });
@@ -62,8 +66,8 @@ export default function Board() {
       // move by isClick
       // move piece
       if (
-        (currentPlayer === PlayerTypes.WHITE && isWhitePiece(endDragIndex)) ||
-        (currentPlayer == PlayerTypes.BLACK && isBlackPiece(endDragIndex))
+        (currentPlayer === PlayerTypes.WHITE && dragEndPiece) ||
+        (currentPlayer == PlayerTypes.BLACK && dragEndPiece)
       ) {
         // selecting another piece
         dispatch({ type: actionTypes.SELECT_PIECE, payload: endDragIndex });
