@@ -23,7 +23,7 @@ export default function Piece({ pieceKey, index }: IPiece) {
 
   return (
     <div
-      className="w-16 h-16 cursor-pointer bg-no-repeat bg-center"
+      className="w-16 h-16 cursor-pointer bg-no-repeat bg-center z-10"
       ref={setNodeRef}
       {...listeners}
       {...attributes}

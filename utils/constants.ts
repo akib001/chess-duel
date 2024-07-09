@@ -118,6 +118,7 @@ export const SQUARE_VERTICAL_LABEL: Record<number, string> = {
   0: "6",
   8: "5",
   16: "4",
+  24: "5",
   32: "3",
   40: "2",
   48: "1",
