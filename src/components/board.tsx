@@ -3,11 +3,10 @@ import { useReducer, useState } from "react";
 import gameReducer, { initialState } from "../../utils/gameReducer";
 import Square from "./square";
 import Piece from "./piece";
-import { PieceTypes, PlayerTypes, actionTypes } from "../../utils/enums";
+import { PieceTypes, actionTypes } from "../../utils/enums";
 import { DndContext, DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import { isPlayerPiece } from "../../utils/helpers";
 import HistoryTable from "./historyTable";
-import { GameHistory } from "../../utils/common.interface";
 
 export default function Board() {
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
@@ -97,27 +96,33 @@ export default function Board() {
 
   return (
     <DndContext onDragEnd={dragEndHandler} onDragStart={handleDragStart}>
-      <div>
+      <div className="grid grid-cols-7 gap-4 w-full">
+        {/* <div>
         <div>
           Current Player:{" "}
           {gameState?.currentPlayer == PlayerTypes.WHITE ? "White" : "Black"}
         </div>
         <button onClick={onClickUndo}>Undo</button>
+      </div> */}
+        <div className="col-span-7 md:col-span-4">
+          <div className="w-full h-full aspect-square flex flex-wrap border-2 border-white">
+            {(gameHistoryIndex !== null && gameHistoryIndex >= 0
+              ? gameState.gameHistories[gameHistoryIndex]
+              : gameState
+            )?.board.map((item: PieceTypes, i: number) => (
+              <Square key={`${item}-${i}`} index={i} gameState={gameState}>
+                <Piece pieceKey={item} index={i} />
+              </Square>
+            ))}
+          </div>
+        </div>
+        <div className="col-span-7 md:col-span-3 ">
+          <HistoryTable
+            gameHistories={gameState.gameHistories}
+            onChangeHistory={onChangeHistory}
+          />
+        </div>
       </div>
-      <div className="w-[600px] h-[600px] flex flex-wrap border-2 border-white">
-        {(gameHistoryIndex !== null && gameHistoryIndex >= 0 
-          ? gameState.gameHistories[gameHistoryIndex]
-          : gameState
-        )?.board.map((item: PieceTypes, i: number) => (
-          <Square key={`${item}-${i}`} index={i} gameState={gameState}>
-            <Piece pieceKey={item} index={i} />
-          </Square>
-        ))}
-      </div>
-      {/* <HistoryTable
-        gameHistories={gameState.gameHistories}
-        onChangeHistory={onChangeHistory}
-      /> */}
     </DndContext>
   );
 }

@@ -11,7 +11,7 @@ export default function HistoryTable({
   onChangeHistory,
 }: HistoryProps) {
   return (
-    <table className="border-collapse table-auto text-sm">
+    <table className="border-collapse w-full table-auto text-sm">
       <caption className="text-slate-500 dark:text-slate-400 pb-4 text-xs caption-top">
         Game Moves History
       </caption>

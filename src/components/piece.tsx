@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { PIECE_IMAGES } from "../../utils/constants";
 import { PieceTypes } from "../../utils/enums";
 import { useDraggable } from "@dnd-kit/core";
@@ -23,14 +22,15 @@ export default function Piece({ pieceKey, index }: IPiece) {
 
   return (
     <div
-      className="w-16 h-16 cursor-pointer bg-no-repeat bg-center z-10"
+      className="w-[85%] h-[85%] cursor-pointer bg-no-repeat bg-center z-10"
       ref={setNodeRef}
       {...listeners}
       {...attributes}
       style={{
         ...style,
         backgroundImage: pieceKey ? `url(${PIECE_IMAGES[pieceKey]})` : "none",
-        backgroundSize: "64px 64px",
+        backgroundSize: "contain",
+        // backgroundSize: "64px 64px",
       }}
     ></div>
   );

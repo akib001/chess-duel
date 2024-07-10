@@ -70,7 +70,7 @@ export default function Square({ index, children, gameState }: SquareProps) {
   return (
     <div
       ref={setNodeRef}
-      className={`w-[12.5%] relative flex justify-center items-center 
+      className={`h-[12.5%] w-[12.5%] relative flex justify-center items-center 
       ${isLightSquare ? "bg-white" : "bg-black"}  ${
         currSelectedLocation === index
           ? "outline outline-4 outline-offset-[-4px] outline-blue-500"
