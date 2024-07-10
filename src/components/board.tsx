@@ -7,6 +7,7 @@ import { PieceTypes, PlayerTypes, actionTypes } from "../../utils/enums";
 import { DndContext, DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import { isPlayerPiece } from "../../utils/helpers";
 import HistoryTable from "./historyTable";
+import { GameHistory } from "../../utils/common.interface";
 
 export default function Board() {
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
@@ -45,28 +46,30 @@ export default function Board() {
     const isClick = startDragIndex == endDragIndex;
     const dragEndPiece = gameState.board[endDragIndex];
 
-    if (selectedLocation == null && isClick) {
+    if (
+      selectedLocation == null &&
+      isClick &&
+      isPlayerPiece(currentPlayer, dragEndPiece)
+    ) {
       dispatch({ type: actionTypes.SELECT_PIECE, payload: endDragIndex });
     } else if (selectedLocation && !isClick) {
-      // selected and then try to drag to another location
-      // move piece
+      // console.log("selected and then try to drag to another location");
       dispatch({
         type: actionTypes.MOVE_PIECE,
         payload: { startIndex: startDragIndex, endIndex: endDragIndex },
       });
     } else if (isClick && selectedLocation == endDragIndex) {
-      // isClick and selected piece is the same
-
+      // console.log("isClick and selected piece is the same");
       dispatch({ type: actionTypes.SELECT_PIECE, payload: null });
     } else if (
       selectedLocation &&
       isClick &&
       isPlayerPiece(currentPlayer, selectedPiece)
     ) {
-      // move by isClick
-      // move piece
+      // console.log("move by isClick");
+
       if (isPlayerPiece(currentPlayer, dragEndPiece)) {
-        // selecting another own piece
+        // console.log("selecting another own piece");
         dispatch({ type: actionTypes.SELECT_PIECE, payload: endDragIndex });
         return;
       }
@@ -80,14 +83,14 @@ export default function Board() {
       !isClick &&
       isPlayerPiece(currentPlayer, gameState.board[startDragIndex])
     ) {
-      // select piece by drag
       // move piece
-
+      // console.log("select piece by drag");
       dispatch({
         type: actionTypes.MOVE_PIECE,
         payload: { startIndex: startDragIndex, endIndex: endDragIndex },
       });
     } else {
+      // console.log("else case");
       dispatch({ type: actionTypes.SELECT_PIECE, payload: null });
     }
   };
@@ -102,7 +105,7 @@ export default function Board() {
         <button onClick={onClickUndo}>Undo</button>
       </div>
       <div className="w-[600px] h-[600px] flex flex-wrap border-2 border-white">
-        {(gameHistoryIndex !== null
+        {(gameHistoryIndex !== null && gameHistoryIndex >= 0 
           ? gameState.gameHistories[gameHistoryIndex]
           : gameState
         )?.board.map((item: PieceTypes, i: number) => (
@@ -111,10 +114,10 @@ export default function Board() {
           </Square>
         ))}
       </div>
-      <HistoryTable
+      {/* <HistoryTable
         gameHistories={gameState.gameHistories}
         onChangeHistory={onChangeHistory}
-      />
+      /> */}
     </DndContext>
   );
 }
