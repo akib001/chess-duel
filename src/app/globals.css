@@ -3,12 +3,13 @@
 @tailwind utilities;
 
 :root {
+  --color-white: #FFFFFF;
   --color-board-light: #FFFFFF;
   --color-board-dark: #000000;
   --color-piece-white: #FFFFFF;
   --color-piece-black: #000000;
   --color-accent: #3498db;
-  --color-background: #f0f0f0;
+  --color-background: #302E2B;
   --color-outline: #3b82f6;
   --color-label-light: #000000;
   --color-label-dark: #FFFFFF;
@@ -17,4 +18,7 @@
   --color-capture-border-dark: rgba(255, 255, 255, 0.2);
 }
 
-
+body {
+  background: var(--color-background);
+  color: var(--color-white);
+}

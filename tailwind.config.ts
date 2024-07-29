@@ -8,10 +8,20 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      colors: {
+        'white': 'var(--color-white)',
+        'board-light': 'var(--color-board-light)',
+        'board-dark': 'var(--color-board-dark)',
+        'piece-white': 'var(--color-piece-white)',
+        'piece-black': 'var(--color-piece-black)',
+        'accent': 'var(--color-accent)',
+        'background': 'var(--color-background)',
+        'outline': 'var(--color-outline)',
+        'label-light': 'var(--color-label-light)',
+        'label-dark': 'var(--color-label-dark)',
+        'legal-move': 'var(--color-legal-move)',
+        'capture-border-light': 'var(--color-capture-border-light)',
+        'capture-border-dark': 'var(--color-capture-border-dark)',
       },
     },
   },

@@ -54,7 +54,7 @@ export default function Square({ index, children, gameState }: SquareProps) {
       return isTryingToCapture ? (
         <div
         className={`w-full h-full m-1 absolute bg-transparent 
-        ${isLightSquare ? "border-capture-border-light" : "border-capture-border-dark"} 
+        ${isLightSquare ? "border-black" : "border-white"} 
         border-8 border-opacity-20 rounded-full animate-pulse`}
       />
       ) : (
@@ -77,7 +77,7 @@ export default function Square({ index, children, gameState }: SquareProps) {
           : ""
       } ${isOver ? "opacity-50" : ""}`}
     >
-      <p className="bg-green-300 text-xs absolute top-0 right-1">{index}</p>
+      <p className="bg-green-300 text-xs absolute top-0 right-1 text-black">{index}</p>
       {SQUARE_VERTICAL_LABEL[index] && (
         <p
           className={`text-lg font-bold absolute top-0 left-1 ${
