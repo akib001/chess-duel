@@ -20,6 +20,9 @@ export interface GameState {
   gameHistories: GameHistory[];
   capturedPieces: Array<PieceTypes>;
   status: GameStatus;
+  whiteTimer: number;
+  blackTimer: number;
+  isPaused: boolean;
 }
 
 interface playerNotation {

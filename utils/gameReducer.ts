@@ -1,5 +1,5 @@
 import { GameState } from "./common.interface";
-import { initialChessBoard } from "./constants";
+import { DEFAULT_10_MIN, initialChessBoard } from "./constants";
 import { GameStatus, PieceTypes, PlayerTypes, actionTypes } from "./enums";
 import {
   checkMove,
@@ -18,6 +18,9 @@ export const initialState: GameState = {
   gameHistories: [],
   capturedPieces: [],
   status: GameStatus.ONGOING,
+  whiteTimer: DEFAULT_10_MIN,
+  blackTimer: DEFAULT_10_MIN,
+  isPaused: false,
 };
 
 export default function gameReducer(state = initialState, action: any) {
@@ -164,6 +167,19 @@ export default function gameReducer(state = initialState, action: any) {
         board: copiedBoard,
         gameHistories: copiedHistories,
         currentPlayer: oppositePlayer(state.currentPlayer),
+      };
+    }
+    case actionTypes.TIME_UP: {
+      const player = action.payload;
+      return {
+        ...state,
+        status: player === PlayerTypes.WHITE ? GameStatus.BLACK_WINS_BY_TIME : GameStatus.WHITE_WINS_BY_TIME,
+      };
+    }
+    case actionTypes.TOGGLE_PAUSE: {
+      return {
+        ...state,
+        isPaused: !state.isPaused,
       };
     }
     default:

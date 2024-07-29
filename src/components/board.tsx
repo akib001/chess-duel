@@ -1,12 +1,18 @@
 "use client";
-import { useReducer, useState } from "react";
+import { useCallback, useReducer, useState } from "react";
 import gameReducer, { initialState } from "../../utils/gameReducer";
 import Square from "./square";
 import Piece from "./piece";
-import { PieceTypes, actionTypes } from "../../utils/enums";
+import {
+  GameStatus,
+  PieceTypes,
+  PlayerTypes,
+  actionTypes,
+} from "../../utils/enums";
 import { DndContext, DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import { isPlayerPiece } from "../../utils/helpers";
 import HistoryTable from "./historyTable";
+import Timer from "./Timer";
 
 export default function Board() {
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
@@ -82,16 +88,25 @@ export default function Board() {
       !isClick &&
       isPlayerPiece(currentPlayer, gameState.board[startDragIndex])
     ) {
-      // move piece
-      // console.log("select piece by drag");
       dispatch({
         type: actionTypes.MOVE_PIECE,
         payload: { startIndex: startDragIndex, endIndex: endDragIndex },
       });
     } else {
-      // console.log("else case");
       dispatch({ type: actionTypes.SELECT_PIECE, payload: null });
     }
+  };
+
+  const handleWhiteTimeUp = useCallback(() => {
+    dispatch({ type: actionTypes.TIME_UP, payload: PlayerTypes.WHITE });
+  }, []);
+
+  const handleBlackTimeUp = useCallback(() => {
+    dispatch({ type: actionTypes.TIME_UP, payload: PlayerTypes.BLACK });
+  }, []);
+
+  const handleTogglePause = () => {
+    dispatch({ type: actionTypes.TOGGLE_PAUSE });
   };
 
   return (
@@ -104,6 +119,25 @@ export default function Board() {
         </div>
         <button onClick={onClickUndo}>Undo</button>
       </div> */}
+        <div>
+          <button onClick={handleTogglePause}>
+            {gameState.isPaused ? "Resume" : "Pause"}
+          </button>
+          White: <Timer 
+            initialTime={gameState.whiteTimer} 
+            isRunning={gameState.currentPlayer === PlayerTypes.WHITE && 
+                       gameState.status === GameStatus.ONGOING && 
+                       !gameState.isPaused} 
+            onTimeUp={handleWhiteTimeUp}
+          />
+          Black: <Timer 
+            initialTime={gameState.blackTimer} 
+            isRunning={gameState.currentPlayer === PlayerTypes.BLACK && 
+                       gameState.status === GameStatus.ONGOING && 
+                       !gameState.isPaused} 
+            onTimeUp={handleBlackTimeUp}
+          />
+        </div>
         <div className="col-span-7 md:col-span-4">
           <div className="w-full h-full aspect-square flex flex-wrap border-2 border-white">
             {(gameHistoryIndex !== null && gameHistoryIndex >= 0

@@ -23,6 +23,8 @@ export enum actionTypes {
   SELECT_PIECE = "SELECT_PIECE",
   MOVE_PIECE = "MOVE_PIECE",
   UNDO_MOVE = "UNDO_MOVE",
+  TIME_UP = "TIME_UP",
+  TOGGLE_PAUSE = "TOGGLE_PAUSE",
 }
 
 export enum GameStatus {
@@ -30,4 +32,6 @@ export enum GameStatus {
   STALEMATE = "STALEMATE",
   CHECK = "CHECK",
   ONGOING = "ONGOING",
+  WHITE_WINS_BY_TIME = "WHITE_WINS_BY_TIME",
+  BLACK_WINS_BY_TIME = "BLACK_WINS_BY_TIME",
 }
