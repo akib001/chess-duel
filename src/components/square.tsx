@@ -53,10 +53,10 @@ export default function Square({ index, children, gameState }: SquareProps) {
     if (checkMove(currSelectedLocation, index, currentPlayer, board)) {
       return isTryingToCapture ? (
         <div
-          className={`w-full h-full m-1 absolute bg-transparent ${
-            isLightSquare ? "border-black" : "border-white"
-          } border-8 border-opacity-20 rounded-full animate-pulse`}
-        />
+        className={`w-full h-full m-1 absolute bg-transparent 
+        ${isLightSquare ? "border-capture-border-light" : "border-capture-border-dark"} 
+        border-8 border-opacity-20 rounded-full animate-pulse`}
+      />
       ) : (
         <div
           className={`w-7 h-7 absolute ${

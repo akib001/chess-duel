@@ -30,7 +30,6 @@ export default function Piece({ pieceKey, index }: IPiece) {
         ...style,
         backgroundImage: pieceKey ? `url(${PIECE_IMAGES[pieceKey]})` : "none",
         backgroundSize: "contain",
-        // backgroundSize: "64px 64px",
       }}
     ></div>
   );
