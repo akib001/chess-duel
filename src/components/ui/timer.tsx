@@ -1,12 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { PlayerTypes } from "../../../utils/enums";
 
 interface TimerProps {
+  playerType: PlayerTypes;
   initialTime: number;
   isRunning: boolean;
   onTimeUp: () => void;
 }
 
-const Timer: React.FC<TimerProps> = ({ initialTime, isRunning, onTimeUp }) => {
+const Timer: React.FC<TimerProps> = ({
+  playerType,
+  initialTime,
+  isRunning,
+  onTimeUp,
+}) => {
   const [timeLeft, setTimeLeft] = useState(initialTime);
 
   useEffect(() => {
@@ -23,7 +30,6 @@ const Timer: React.FC<TimerProps> = ({ initialTime, isRunning, onTimeUp }) => {
           return prevTime - 1;
         });
       }, 1000);
-      
     } else if (!isRunning && interval) {
       clearInterval(interval);
     }
@@ -36,10 +42,15 @@ const Timer: React.FC<TimerProps> = ({ initialTime, isRunning, onTimeUp }) => {
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
 
-  return <div>{formatTime(timeLeft)}</div>;
+  const backgroundColor =
+    playerType === PlayerTypes.WHITE ? "bg-white text-black" : "bg-[#262421]";
+
+  return (
+    <div className={`${backgroundColor} px-2 py-2`}>{formatTime(timeLeft)}</div>
+  );
 };
 
 export default React.memo(Timer);

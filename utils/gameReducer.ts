@@ -16,7 +16,7 @@ export const initialState: GameState = {
   currentPlayer: PlayerTypes.WHITE,
   selectedLocation: null,
   gameHistories: [],
-  capturedPieces: [],
+  capturedPieces: [PieceTypes.WHITE_BISHOP, PieceTypes.WHITE_BISHOP, PieceTypes.BLACK_KNIGHT],
   status: GameStatus.ONGOING,
   whiteTimer: DEFAULT_10_MIN,
   blackTimer: DEFAULT_10_MIN,

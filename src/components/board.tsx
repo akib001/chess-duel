@@ -12,7 +12,9 @@ import {
 import { DndContext, DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import { isPlayerPiece } from "../../utils/helpers";
 import HistoryTable from "./historyTable";
-import Timer from "./Timer";
+import PlayerAvatar from "./ui/playerAvatar";
+import NameAndCaptured from "./ui/nameAndCaptured";
+import Timer from "./ui/timer";
 
 export default function Board() {
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
@@ -108,32 +110,18 @@ export default function Board() {
 
   return (
     <DndContext onDragEnd={dragEndHandler} onDragStart={handleDragStart}>
-      <div className="grid grid-cols-7 gap-4 w-full">
-        {/* <div>
-        <div>
-          Current Player:{" "}
-          {gameState?.currentPlayer == PlayerTypes.WHITE ? "White" : "Black"}
-        </div>
-        <button onClick={onClickUndo}>Undo</button>
-      </div> */}
-
-        <div className="col-span-7 md:col-span-4">
-          <div>
-            <button onClick={handleTogglePause}>
-              {gameState.isPaused ? "Resume" : "Pause"}
-            </button>
-            White:{" "}
+      <div className="grid grid-cols-7 gap-4 w-full py-4">
+        <div className="col-span-7 md:col-span-4 space-y-4">
+          <div className="col-span-7 md:col-span-4 flex justify-between">
+            <div className="flex gap-2">
+              <PlayerAvatar playerType={PlayerTypes.BLACK} />
+              <NameAndCaptured
+                playerType={PlayerTypes.BLACK}
+                capturedPieces={gameState.capturedPieces}
+              />
+            </div>
             <Timer
-              initialTime={gameState.whiteTimer}
-              isRunning={
-                gameState.currentPlayer === PlayerTypes.WHITE &&
-                gameState.status === GameStatus.ONGOING &&
-                !gameState.isPaused
-              }
-              onTimeUp={handleWhiteTimeUp}
-            />
-            Black:{" "}
-            <Timer
+              playerType={PlayerTypes.BLACK}
               initialTime={gameState.blackTimer}
               isRunning={
                 gameState.currentPlayer === PlayerTypes.BLACK &&
@@ -143,6 +131,7 @@ export default function Board() {
               onTimeUp={handleBlackTimeUp}
             />
           </div>
+
           <div className="w-full aspect-square flex flex-wrap border-2 border-white">
             {(gameHistoryIndex !== null && gameHistoryIndex >= 0
               ? gameState.gameHistories[gameHistoryIndex]
@@ -153,7 +142,27 @@ export default function Board() {
               </Square>
             ))}
           </div>
+          <div className="col-span-7 md:col-span-4 flex justify-between">
+            <div className="flex gap-2">
+              <PlayerAvatar playerType={PlayerTypes.WHITE} />
+              <NameAndCaptured
+                playerType={PlayerTypes.WHITE}
+                capturedPieces={gameState.capturedPieces}
+              />
+            </div>
+            <Timer
+              playerType={PlayerTypes.WHITE}
+              initialTime={gameState.blackTimer}
+              isRunning={
+                gameState.currentPlayer === PlayerTypes.WHITE &&
+                gameState.status === GameStatus.ONGOING &&
+                !gameState.isPaused
+              }
+              onTimeUp={handleBlackTimeUp}
+            />
+          </div>
         </div>
+
         <div className="col-span-7 md:col-span-3 ">
           <HistoryTable
             gameHistories={gameState.gameHistories}
