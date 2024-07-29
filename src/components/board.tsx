@@ -42,9 +42,6 @@ export default function Board() {
     if (startDragIndex === undefined || endDragIndex === undefined) {
       return;
     }
-
-    console.log("drag end", endDragIndex);
-
     const currentPlayer = gameState.currentPlayer;
     const selectedLocation = gameState.selectedLocation;
     const selectedPiece = gameState.board[selectedLocation];
@@ -119,27 +116,34 @@ export default function Board() {
         </div>
         <button onClick={onClickUndo}>Undo</button>
       </div> */}
-        <div>
-          <button onClick={handleTogglePause}>
-            {gameState.isPaused ? "Resume" : "Pause"}
-          </button>
-          White: <Timer 
-            initialTime={gameState.whiteTimer} 
-            isRunning={gameState.currentPlayer === PlayerTypes.WHITE && 
-                       gameState.status === GameStatus.ONGOING && 
-                       !gameState.isPaused} 
-            onTimeUp={handleWhiteTimeUp}
-          />
-          Black: <Timer 
-            initialTime={gameState.blackTimer} 
-            isRunning={gameState.currentPlayer === PlayerTypes.BLACK && 
-                       gameState.status === GameStatus.ONGOING && 
-                       !gameState.isPaused} 
-            onTimeUp={handleBlackTimeUp}
-          />
-        </div>
+
         <div className="col-span-7 md:col-span-4">
-          <div className="w-full h-full aspect-square flex flex-wrap border-2 border-white">
+          <div>
+            <button onClick={handleTogglePause}>
+              {gameState.isPaused ? "Resume" : "Pause"}
+            </button>
+            White:{" "}
+            <Timer
+              initialTime={gameState.whiteTimer}
+              isRunning={
+                gameState.currentPlayer === PlayerTypes.WHITE &&
+                gameState.status === GameStatus.ONGOING &&
+                !gameState.isPaused
+              }
+              onTimeUp={handleWhiteTimeUp}
+            />
+            Black:{" "}
+            <Timer
+              initialTime={gameState.blackTimer}
+              isRunning={
+                gameState.currentPlayer === PlayerTypes.BLACK &&
+                gameState.status === GameStatus.ONGOING &&
+                !gameState.isPaused
+              }
+              onTimeUp={handleBlackTimeUp}
+            />
+          </div>
+          <div className="w-full aspect-square flex flex-wrap border-2 border-white">
             {(gameHistoryIndex !== null && gameHistoryIndex >= 0
               ? gameState.gameHistories[gameHistoryIndex]
               : gameState
