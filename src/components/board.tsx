@@ -128,6 +128,7 @@ export default function Board() {
                 gameState.status === GameStatus.ONGOING &&
                 !gameState.isPaused
               }
+              currentPlayer={gameState.currentPlayer}
               onTimeUp={handleBlackTimeUp}
             />
           </div>
@@ -158,6 +159,7 @@ export default function Board() {
                 gameState.status === GameStatus.ONGOING &&
                 !gameState.isPaused
               }
+              currentPlayer={gameState.currentPlayer}
               onTimeUp={handleBlackTimeUp}
             />
           </div>

@@ -5,6 +5,7 @@ interface TimerProps {
   playerType: PlayerTypes;
   initialTime: number;
   isRunning: boolean;
+  currentPlayer: PlayerTypes;
   onTimeUp: () => void;
 }
 
@@ -12,6 +13,7 @@ const Timer: React.FC<TimerProps> = ({
   playerType,
   initialTime,
   isRunning,
+  currentPlayer,
   onTimeUp,
 }) => {
   const [timeLeft, setTimeLeft] = useState(initialTime);
@@ -46,10 +48,10 @@ const Timer: React.FC<TimerProps> = ({
   };
 
   const backgroundColor =
-    playerType === PlayerTypes.WHITE ? "bg-white text-black" : "bg-[#262421]";
+    playerType === currentPlayer ? "bg-white text-black" : "bg-[#262421]";
 
   return (
-    <div className={`${backgroundColor} px-2 py-2`}>{formatTime(timeLeft)}</div>
+    <div className={`${backgroundColor} px-2 py-2 rounded-sm`}>{formatTime(timeLeft)}</div>
   );
 };
 
