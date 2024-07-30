@@ -16,7 +16,7 @@ export const initialState: GameState = {
   currentPlayer: PlayerTypes.WHITE,
   selectedLocation: null,
   gameHistories: [],
-  capturedPieces: [PieceTypes.WHITE_BISHOP, PieceTypes.WHITE_BISHOP, PieceTypes.BLACK_KNIGHT],
+  capturedPieces: [],
   status: GameStatus.ONGOING,
   whiteTimer: DEFAULT_10_MIN,
   blackTimer: DEFAULT_10_MIN,
@@ -48,7 +48,7 @@ export default function gameReducer(state = initialState, action: any) {
       }
 
       const selectedPiece = board[selectedLocation];
-      const toPiece = board[action.payload];
+      const toPiece = board[targetLocation];
 
       // out of board
       if (targetLocation < 0 || targetLocation > 63) {

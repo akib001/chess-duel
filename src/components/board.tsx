@@ -20,6 +20,8 @@ export default function Board() {
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
   const [gameHistoryIndex, setGameHistoryIndex] = useState<number | null>(null);
 
+  console.log('gamestate-->', gameState)
+
   const onChangeHistory = (index: number) => {
     setGameHistoryIndex(index);
   };
@@ -34,7 +36,7 @@ export default function Board() {
 
   const handleDragStart = (e: DragStartEvent) => {
     const index = e.active.data?.current?.index;
-    console.log("drag start", index);
+    // console.log("drag start", index);
     if (index === undefined) return;
   };
 
