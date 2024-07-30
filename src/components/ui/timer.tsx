@@ -17,7 +17,7 @@ const Timer: React.FC<TimerProps> = ({
   onTimeUp,
 }) => {
   const [timeLeft, setTimeLeft] = useState(initialTime);
-
+  //TODO: after restart clock is not reset
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 

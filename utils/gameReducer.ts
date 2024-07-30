@@ -1,9 +1,16 @@
 import { GameState } from "./common.interface";
 import { DEFAULT_10_MIN, initialChessBoard } from "./constants";
-import { GameStatus, PieceTypes, PlayerTypes, actionTypes } from "./enums";
+import {
+  GameResult,
+  GameStatus,
+  PieceTypes,
+  PlayerTypes,
+  actionTypes,
+} from "./enums";
 import {
   checkMove,
   findKingPosition,
+  getResult,
   isCheckmate,
   isKingInCheck,
   isOpponentPiece,
@@ -16,11 +23,12 @@ export const initialState: GameState = {
   currentPlayer: PlayerTypes.WHITE,
   selectedLocation: null,
   gameHistories: [],
-  capturedPieces: [PieceTypes.WHITE_BISHOP, PieceTypes.WHITE_BISHOP, PieceTypes.BLACK_KNIGHT],
+  capturedPieces: [],
   status: GameStatus.ONGOING,
   whiteTimer: DEFAULT_10_MIN,
   blackTimer: DEFAULT_10_MIN,
-  isPaused: false,
+  isPaused: true,
+  result: GameResult.ONGOING,
 };
 
 export default function gameReducer(state = initialState, action: any) {
@@ -48,7 +56,7 @@ export default function gameReducer(state = initialState, action: any) {
       }
 
       const selectedPiece = board[selectedLocation];
-      const toPiece = board[action.payload];
+      const toPiece = board[targetLocation];
 
       // out of board
       if (targetLocation < 0 || targetLocation > 63) {
@@ -136,6 +144,7 @@ export default function gameReducer(state = initialState, action: any) {
             gameHistories: { ...copiedHistories, isCheckmate: true },
             capturedPieces: copiedCapturedPieces,
             status: GameStatus.CHECKMATE,
+            result: getResult(currentPlayer),
           };
         }
 
@@ -170,10 +179,11 @@ export default function gameReducer(state = initialState, action: any) {
       };
     }
     case actionTypes.TIME_UP: {
-      const player = action.payload;
+      const { currentPlayer } = state;
       return {
         ...state,
-        status: player === PlayerTypes.WHITE ? GameStatus.BLACK_WINS_BY_TIME : GameStatus.WHITE_WINS_BY_TIME,
+        status: GameStatus.TIMEOUT,
+        result: getResult(currentPlayer),
       };
     }
     case actionTypes.TOGGLE_PAUSE: {
@@ -181,6 +191,10 @@ export default function gameReducer(state = initialState, action: any) {
         ...state,
         isPaused: !state.isPaused,
       };
+    }
+    case actionTypes.RESET: {
+      console.log('reset');
+      return { ...initialState, isPaused: false };
     }
     default:
       return state;

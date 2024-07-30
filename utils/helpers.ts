@@ -1,4 +1,4 @@
-import { PieceTypes, PlayerTypes } from "./enums";
+import { GameResult, PieceTypes, PlayerTypes } from "./enums";
 
 const checkPawnMoves = (
   startLocation: number,
@@ -194,7 +194,8 @@ const checkSlidingPieceMoves = (
   // initial check
   const selectedPiece = board[startLocation];
   if (
-    (selectedPiece == PieceTypes.WHITE_ROOK || selectedPiece == PieceTypes.BLACK_ROOK) &&
+    (selectedPiece == PieceTypes.WHITE_ROOK ||
+      selectedPiece == PieceTypes.BLACK_ROOK) &&
     startRow !== endRow &&
     startCol !== endCol
   ) {
@@ -272,7 +273,10 @@ export const checkMove = (
 ) => {
   const targetPiece = board[startLocation];
 
-  if (targetPiece == PieceTypes.WHITE_PAWN || targetPiece == PieceTypes.BLACK_PAWN) {
+  if (
+    targetPiece == PieceTypes.WHITE_PAWN ||
+    targetPiece == PieceTypes.BLACK_PAWN
+  ) {
     return checkPawnMoves(startLocation, endLocation, playerType, board);
   } else if (
     targetPiece == PieceTypes.WHITE_ROOK ||
@@ -344,7 +348,9 @@ export function findKingPosition(
   player: PlayerTypes
 ): number {
   const kingPiece =
-    player === PlayerTypes.WHITE ? PieceTypes.WHITE_KING : PieceTypes.BLACK_KING;
+    player === PlayerTypes.WHITE
+      ? PieceTypes.WHITE_KING
+      : PieceTypes.BLACK_KING;
   return board.findIndex((piece) => piece === kingPiece);
 }
 
@@ -481,10 +487,19 @@ export const isWhitePiece = (piece: PieceTypes): boolean =>
 export const isBlackPiece = (piece: PieceTypes): boolean =>
   piece >= PieceTypes.BLACK_PAWN && piece <= PieceTypes.BLACK_KING;
 
-export const isPlayerPiece = (player: PlayerTypes, piece: PieceTypes): boolean =>
+export const isPlayerPiece = (
+  player: PlayerTypes,
+  piece: PieceTypes
+): boolean =>
   player === PlayerTypes.WHITE ? isWhitePiece(piece) : isBlackPiece(piece);
 
-export const isOpponentPiece = (player: PlayerTypes, piece: PieceTypes): boolean =>
+export const isOpponentPiece = (
+  player: PlayerTypes,
+  piece: PieceTypes
+): boolean =>
   player === PlayerTypes.WHITE ? isBlackPiece(piece) : isWhitePiece(piece);
 
-
+export const getResult = (currentPlayer: PlayerTypes): GameResult =>
+  currentPlayer === PlayerTypes.WHITE
+    ? GameResult.BLACK_WINS
+    : GameResult.WHITE_WINS;
