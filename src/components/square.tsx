@@ -77,7 +77,7 @@ export default function Square({ index, children, gameState }: SquareProps) {
           : ""
       } ${isOver ? "opacity-50" : ""}`}
     >
-      <p className="bg-green-300 text-xs absolute top-0 right-1 text-black">{index}</p>
+      {/* <p className="bg-green-300 text-xs absolute top-0 right-1 text-black">{index}</p> */}
       {SQUARE_VERTICAL_LABEL[index] && (
         <p
           className={`text-lg font-bold absolute top-0 left-1 ${
