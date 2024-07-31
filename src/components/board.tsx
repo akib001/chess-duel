@@ -15,10 +15,13 @@ import HistoryTable from "./historyTable";
 import PlayerAvatar from "./ui/playerAvatar";
 import NameAndCaptured from "./ui/nameAndCaptured";
 import Timer from "./ui/timer";
+import InitialModal from "./ui/initialModal";
+import GameOverModal from "./ui/gameOverModal";
 
 export default function Board() {
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
   const [gameHistoryIndex, setGameHistoryIndex] = useState<number | null>(null);
+  const [openInitialModal, setOpenInitialModal] = useState(true);
 
   console.log('gamestate-->', gameState)
 
@@ -98,16 +101,21 @@ export default function Board() {
     }
   };
 
-  const handleWhiteTimeUp = useCallback(() => {
-    dispatch({ type: actionTypes.TIME_UP, payload: PlayerTypes.WHITE });
-  }, []);
-
-  const handleBlackTimeUp = useCallback(() => {
-    dispatch({ type: actionTypes.TIME_UP, payload: PlayerTypes.BLACK });
+  const handleTimeUp = useCallback(() => {
+    dispatch({ type: actionTypes.TIME_UP });
   }, []);
 
   const handleTogglePause = () => {
     dispatch({ type: actionTypes.TOGGLE_PAUSE });
+  };
+
+  const handleInitialModalClose = () => {
+    setOpenInitialModal(false);
+    handleTogglePause();
+  };
+
+  const handleGameOverModalClose = () => {
+    dispatch({ type: actionTypes.RESET });
   };
 
   return (
@@ -130,13 +138,14 @@ export default function Board() {
                 gameState.status === GameStatus.ONGOING &&
                 !gameState.isPaused
               }
-              onTimeUp={handleBlackTimeUp}
+              currentPlayer={gameState.currentPlayer}
+              onTimeUp={handleTimeUp}
             />
           </div>
 
           <div className="w-full aspect-square flex flex-wrap border-2 border-white">
             {(gameHistoryIndex !== null && gameHistoryIndex >= 0
-              ? gameState.gameHistories[gameHistoryIndex]
+              ? gameState.gameHistories[gameHistoryIndex] 
               : gameState
             )?.board.map((item: PieceTypes, i: number) => (
               <Square key={`${item}-${i}`} index={i} gameState={gameState}>
@@ -160,18 +169,28 @@ export default function Board() {
                 gameState.status === GameStatus.ONGOING &&
                 !gameState.isPaused
               }
-              onTimeUp={handleBlackTimeUp}
+              currentPlayer={gameState.currentPlayer}
+              onTimeUp={handleTimeUp}
             />
           </div>
         </div>
 
-        <div className="col-span-7 md:col-span-3 ">
+        <div className="col-span-7 md:col-span-3">
           <HistoryTable
             gameHistories={gameState.gameHistories}
             onChangeHistory={onChangeHistory}
           />
         </div>
       </div>
+      <InitialModal
+        isOpen={openInitialModal}
+        onClose={handleInitialModalClose}
+      />
+      <GameOverModal
+        result={gameState.result}
+        status={gameState.status}
+        onClose={handleGameOverModalClose}
+      />
     </DndContext>
   );
 }

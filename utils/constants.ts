@@ -126,4 +126,4 @@ export const SQUARE_VERTICAL_LABEL: Record<number, string> = {
 };
 
 
-export const DEFAULT_10_MIN = 600;
+export const DEFAULT_10_MIN = 5;

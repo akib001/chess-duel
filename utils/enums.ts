@@ -25,13 +25,20 @@ export enum actionTypes {
   UNDO_MOVE = "UNDO_MOVE",
   TIME_UP = "TIME_UP",
   TOGGLE_PAUSE = "TOGGLE_PAUSE",
+  RESET = "RESET",
 }
 
 export enum GameStatus {
+  ONGOING = "ONGOING",
+  CHECK = "CHECK",
   CHECKMATE = "CHECKMATE",
   STALEMATE = "STALEMATE",
-  CHECK = "CHECK",
+  TIMEOUT = "TIMEOUT",
+}
+
+export enum GameResult {
   ONGOING = "ONGOING",
-  WHITE_WINS_BY_TIME = "WHITE_WINS_BY_TIME",
-  BLACK_WINS_BY_TIME = "BLACK_WINS_BY_TIME",
+  WHITE_WINS = "WHITE_WINS",
+  BLACK_WINS = "BLACK_WINS",
+  DRAW = "DRAW",
 }
