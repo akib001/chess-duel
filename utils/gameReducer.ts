@@ -193,7 +193,6 @@ export default function gameReducer(state = initialState, action: any) {
       };
     }
     case actionTypes.RESET: {
-      console.log('reset');
       return { ...initialState, isPaused: false };
     }
     default:

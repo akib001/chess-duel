@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { PlayerTypes } from "../../../utils/enums";
+import { GameResult, PlayerTypes } from "../../../utils/enums";
 
 interface TimerProps {
   playerType: PlayerTypes;
@@ -7,6 +7,7 @@ interface TimerProps {
   isRunning: boolean;
   currentPlayer: PlayerTypes;
   onTimeUp: () => void;
+  result: GameResult;
 }
 
 const Timer: React.FC<TimerProps> = ({
@@ -15,9 +16,16 @@ const Timer: React.FC<TimerProps> = ({
   isRunning,
   currentPlayer,
   onTimeUp,
+  result,
 }) => {
   const [timeLeft, setTimeLeft] = useState(initialTime);
-  //TODO: after restart clock is not reset
+
+  useEffect(() => {
+    if (result !== GameResult.ONGOING) {
+      setTimeLeft(initialTime);
+    }
+  }, [initialTime, result]);
+
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
@@ -25,7 +33,7 @@ const Timer: React.FC<TimerProps> = ({
       interval = setInterval(() => {
         setTimeLeft((prevTime) => {
           if (prevTime <= 1) {
-            clearInterval(interval!);
+            if (interval) clearInterval(interval);
             onTimeUp();
             return 0;
           }
@@ -51,7 +59,9 @@ const Timer: React.FC<TimerProps> = ({
     playerType === currentPlayer ? "bg-white text-black" : "bg-[#262421]";
 
   return (
-    <div className={`${backgroundColor} px-2 py-2 rounded-sm`}>{formatTime(timeLeft)}</div>
+    <div className={`${backgroundColor} px-2 py-2 rounded-sm`}>
+      {formatTime(timeLeft)}
+    </div>
   );
 };
 

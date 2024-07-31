@@ -138,6 +138,7 @@ export default function Board() {
               }
               currentPlayer={gameState.currentPlayer}
               onTimeUp={handleTimeUp}
+              result={gameState.result}
             />
           </div>
 
@@ -169,6 +170,7 @@ export default function Board() {
               }
               currentPlayer={gameState.currentPlayer}
               onTimeUp={handleTimeUp}
+              result={gameState.result}
             />
           </div>
         </div>
