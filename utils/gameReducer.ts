@@ -42,7 +42,8 @@ export default function gameReducer(state = initialState, action: any) {
     case actionTypes.MOVE_PIECE: {
       const { board, currentPlayer, status } = state;
 
-      if (status !== GameStatus.ONGOING) {
+      if (status == GameStatus.CHECKMATE || status == GameStatus.TIMEOUT || status == GameStatus.STALEMATE) {
+        console.log("game is not ongoing anymore");
         return { ...state };
       }
 
@@ -89,7 +90,7 @@ export default function gameReducer(state = initialState, action: any) {
 
       if (checkMove(selectedLocation, targetLocation, currentPlayer, board)) {
         if (isTryingToCapture) {
-          capturedPiece = board[targetLocation];
+          capturedPiece = toPiece;
         }
         copiedBoard[selectedLocation] = PieceTypes.EMPTY;
         copiedBoard[targetLocation] = selectedPiece;
@@ -101,8 +102,6 @@ export default function gameReducer(state = initialState, action: any) {
           console.log("king will be in check");
           return { ...state, selectedLocation: null };
         }
-
-        // history save
 
         const oppositePlayerKingPosition = findKingPosition(
           copiedBoard,
@@ -144,7 +143,12 @@ export default function gameReducer(state = initialState, action: any) {
             gameHistories: { ...copiedHistories, isCheckmate: true },
             capturedPieces: copiedCapturedPieces,
             status: GameStatus.CHECKMATE,
-            result: getResult(currentPlayer),
+            result:
+              currentPlayer === PlayerTypes.WHITE
+                ? GameResult.WHITE_WINS
+                : GameResult.BLACK_WINS,
+
+            //TODO: get result function refactor
           };
         }
 
@@ -155,6 +159,7 @@ export default function gameReducer(state = initialState, action: any) {
           currentPlayer: oppositePlayer(currentPlayer),
           gameHistories: copiedHistories,
           capturedPieces: copiedCapturedPieces,
+          status: isCheck ? GameStatus.CHECK : GameStatus.ONGOING,
         };
       }
 

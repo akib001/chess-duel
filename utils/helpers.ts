@@ -360,7 +360,7 @@ export function isKingInCheck(
   player: PlayerTypes
 ): boolean {
   for (let i = 0; i < 64; i++) {
-    if (board[i] !== PieceTypes.EMPTY && isOpponentPiece(player, board[i])) {
+    if (board[i] !== PieceTypes.EMPTY  && isOpponentPiece(player, board[i])) {
       if (checkMove(i, kingPosition, oppositePlayer(player), board)) {
         return true;
       }
@@ -376,17 +376,18 @@ function canKingMove(
 ): boolean {
   const directions = [-9, -8, -7, -1, 1, 7, 8, 9];
   for (const direction of directions) {
-    const newPosition = kingPosition + direction;
+    const newKingPosition = kingPosition + direction;
     if (
-      newPosition >= 0 &&
-      newPosition < 64 &&
-      Math.abs((kingPosition % 8) - (newPosition % 8)) <= 1
+      newKingPosition >= 0 &&
+      newKingPosition < 64 &&
+      Math.abs((kingPosition % 8) - (newKingPosition % 8)) <= 1 &&
+      !isPlayerPiece(player, board[newKingPosition])
     ) {
-      if (checkMove(kingPosition, newPosition, player, board)) {
+      if (checkMove(kingPosition, newKingPosition, player, board)) {
         const tempBoard = [...board];
-        tempBoard[newPosition] = tempBoard[kingPosition];
+        tempBoard[newKingPosition] = tempBoard[kingPosition];
         tempBoard[kingPosition] = PieceTypes.EMPTY;
-        if (!isKingInCheck(tempBoard, newPosition, player)) {
+        if (!isKingInCheck(tempBoard, newKingPosition, player)) {
           return true;
         }
       }
@@ -401,6 +402,7 @@ function canBlockOrCaptureAttacker(
   player: PlayerTypes
 ): boolean {
   const attackingPositions = findAttackingPieces(board, kingPosition, player);
+
 
   for (let i = 0; i < 64; i++) {
     if (board[i] !== PieceTypes.EMPTY && isPlayerPiece(player, board[i])) {
@@ -422,7 +424,9 @@ function canBlockOrCaptureAttacker(
             const tempBoard = [...board];
             tempBoard[blockPos] = tempBoard[i];
             tempBoard[i] = PieceTypes.EMPTY;
-            if (!isKingInCheck(tempBoard, kingPosition, player)) {
+            // Cause king position can be changed after blocking
+            const newKingPosition = findKingPosition(tempBoard, player);
+            if (!isKingInCheck(tempBoard, newKingPosition, player)) {
               return true;
             }
           }

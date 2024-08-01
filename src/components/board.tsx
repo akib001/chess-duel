@@ -23,7 +23,7 @@ export default function Board() {
   const [gameHistoryIndex, setGameHistoryIndex] = useState<number | null>(null);
   const [openInitialModal, setOpenInitialModal] = useState(true);
 
-  console.log('gamestate-->', gameState)
+  // console.log('gamestate-->', gameState)
 
   const onChangeHistory = (index: number) => {
     setGameHistoryIndex(index);
@@ -71,12 +71,10 @@ export default function Board() {
       // console.log("isClick and selected piece is the same");
       dispatch({ type: actionTypes.SELECT_PIECE, payload: null });
     } else if (
-      selectedLocation &&
+      selectedLocation !== null &&
       isClick &&
       isPlayerPiece(currentPlayer, selectedPiece)
     ) {
-      // console.log("move by isClick");
-
       if (isPlayerPiece(currentPlayer, dragEndPiece)) {
         // console.log("selecting another own piece");
         dispatch({ type: actionTypes.SELECT_PIECE, payload: endDragIndex });
@@ -135,7 +133,8 @@ export default function Board() {
               initialTime={gameState.blackTimer}
               isRunning={
                 gameState.currentPlayer === PlayerTypes.BLACK &&
-                gameState.status === GameStatus.ONGOING &&
+                (gameState.status === GameStatus.ONGOING ||
+                  gameState.status === GameStatus.CHECK) &&
                 !gameState.isPaused
               }
               currentPlayer={gameState.currentPlayer}
@@ -146,7 +145,7 @@ export default function Board() {
 
           <div className="w-full aspect-square flex flex-wrap border-2 border-white">
             {(gameHistoryIndex !== null && gameHistoryIndex >= 0
-              ? gameState.gameHistories[gameHistoryIndex] 
+              ? gameState.gameHistories[gameHistoryIndex]
               : gameState
             )?.board.map((item: PieceTypes, i: number) => (
               <Square key={`${item}-${i}`} index={i} gameState={gameState}>
@@ -167,7 +166,8 @@ export default function Board() {
               initialTime={gameState.blackTimer}
               isRunning={
                 gameState.currentPlayer === PlayerTypes.WHITE &&
-                gameState.status === GameStatus.ONGOING &&
+                (gameState.status === GameStatus.ONGOING ||
+                  gameState.status === GameStatus.CHECK) &&
                 !gameState.isPaused
               }
               currentPlayer={gameState.currentPlayer}
