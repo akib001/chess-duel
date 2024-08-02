@@ -17,11 +17,30 @@ import NameAndCaptured from "./ui/nameAndCaptured";
 import Timer from "./ui/timer";
 import InitialModal from "./ui/initialModal";
 import GameOverModal from "./ui/gameOverModal";
+import PawnPromotionModal from "./ui/pawnPromotionModal";
 
 export default function Board() {
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
   const [gameHistoryIndex, setGameHistoryIndex] = useState<number | null>(null);
   const [openInitialModal, setOpenInitialModal] = useState(true);
+
+  function isPawnPromotion(): boolean {
+    // Check first and last rows for any pawn
+    for (let col = 0; col < 8; col++) {
+      const firstRowPiece = gameState.board[col];
+      const lastRowPiece = gameState.board[56 + col];
+
+      if (
+        firstRowPiece === PieceTypes.WHITE_PAWN ||
+        firstRowPiece === PieceTypes.BLACK_PAWN ||
+        lastRowPiece === PieceTypes.WHITE_PAWN ||
+        lastRowPiece === PieceTypes.BLACK_PAWN
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   const onChangeHistory = (index: number) => {
     setGameHistoryIndex(index);
@@ -122,6 +141,10 @@ export default function Board() {
     dispatch({ type: actionTypes.RESET });
   };
 
+  const handlePawnPromotion = (piece?: PieceTypes) => {
+    console.log("pawn promotion handle");
+  };
+
   return (
     <DndContext onDragEnd={dragEndHandler} onDragStart={handleDragStart}>
       <div className="space-x-2">
@@ -208,6 +231,13 @@ export default function Board() {
         status={gameState.status}
         onClose={handleGameOverModalClose}
       />
+      {isPawnPromotion() && (
+        <PawnPromotionModal
+          onClose={handlePawnPromotion}
+          capturedPieces={gameState.capturedPieces}
+          currentPlayer={gameState.currentPlayer}
+        />
+      )}
     </DndContext>
   );
 }
