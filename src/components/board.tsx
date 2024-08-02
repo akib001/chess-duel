@@ -23,8 +23,6 @@ export default function Board() {
   const [gameHistoryIndex, setGameHistoryIndex] = useState<number | null>(null);
   const [openInitialModal, setOpenInitialModal] = useState(true);
 
-  // console.log('gamestate-->', gameState)
-
   const onChangeHistory = (index: number) => {
     setGameHistoryIndex(index);
   };
@@ -126,9 +124,14 @@ export default function Board() {
 
   return (
     <DndContext onDragEnd={dragEndHandler} onDragStart={handleDragStart}>
-      <button onClick={handleTogglePause}>
-        {gameState.isPaused ? "Play" : "II Pause"}
-      </button>
+      <div className="space-x-2">
+        <button onClick={handleTogglePause}>
+          {gameState.isPaused ? "Play" : "Pause"}
+        </button>
+        <button>Undo</button>
+        <button>Restart</button>
+        <button>Mute</button>
+      </div>
       <div className="grid grid-cols-7 gap-4 w-full py-4">
         <div className="col-span-7 md:col-span-4 space-y-4">
           <div className="col-span-7 md:col-span-4 flex justify-between">
