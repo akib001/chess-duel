@@ -118,6 +118,7 @@ export default function Board() {
 
   return (
     <DndContext onDragEnd={dragEndHandler} onDragStart={handleDragStart}>
+      <button onClick={handleTogglePause}>{gameState.isPaused ? 'Play' : 'II Pause'}</button>
       <div className="grid grid-cols-7 gap-4 w-full py-4">
         <div className="col-span-7 md:col-span-4 space-y-4">
           <div className="col-span-7 md:col-span-4 flex justify-between">

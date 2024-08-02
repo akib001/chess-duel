@@ -22,7 +22,6 @@ const Timer: React.FC<TimerProps> = ({
 
   useEffect(() => {
     if (result !== GameResult.ONGOING) {
-      console.log('reset timer');
       setTimeLeft(initialTime);
     }
   }, [initialTime, result]);
