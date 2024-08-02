@@ -98,7 +98,7 @@ export function generateGameNotation(
   let moveNumber = 1;
 
   for (let i = 0; i < gameHistory.length; i += 2) {
-    let notation: any = {
+    let notation = {
       serial: moveNumber,
       white: { notation: "", historyIndex: i },
       black: { notation: "", historyIndex: 0 },

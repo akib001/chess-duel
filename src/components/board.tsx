@@ -38,12 +38,20 @@ export default function Board() {
   };
 
   const handleDragStart = (e: DragStartEvent) => {
+    if (gameHistoryIndex !== null) {
+      setGameHistoryIndex(null);
+      return;
+    }
     const index = e.active.data?.current?.index;
-    // console.log("drag start", index);
     if (index === undefined) return;
   };
 
   const dragEndHandler = (e: DragEndEvent) => {
+    if (gameHistoryIndex !== null) {
+      setGameHistoryIndex(null);
+      return;
+    }
+
     const startDragIndex = e.active.data?.current?.index;
     const endDragIndex = e.over?.data?.current?.index;
     if (startDragIndex === undefined || endDragIndex === undefined) {
@@ -118,7 +126,9 @@ export default function Board() {
 
   return (
     <DndContext onDragEnd={dragEndHandler} onDragStart={handleDragStart}>
-      <button onClick={handleTogglePause}>{gameState.isPaused ? 'Play' : 'II Pause'}</button>
+      <button onClick={handleTogglePause}>
+        {gameState.isPaused ? "Play" : "II Pause"}
+      </button>
       <div className="grid grid-cols-7 gap-4 w-full py-4">
         <div className="col-span-7 md:col-span-4 space-y-4">
           <div className="col-span-7 md:col-span-4 flex justify-between">
@@ -181,6 +191,7 @@ export default function Board() {
         <div className="col-span-7 md:col-span-3">
           <HistoryTable
             gameHistories={gameState.gameHistories}
+            gameHistoryIndex={gameHistoryIndex}
             onChangeHistory={onChangeHistory}
           />
         </div>
