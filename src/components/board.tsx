@@ -1,9 +1,10 @@
 "use client";
-import { useCallback, useReducer, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import gameReducer, { initialState } from "../../utils/gameReducer";
 import Square from "./square";
 import Piece from "./piece";
 import {
+  GameResult,
   GameStatus,
   PieceTypes,
   PlayerTypes,
@@ -18,11 +19,27 @@ import Timer from "./ui/timer";
 import InitialModal from "./ui/initialModal";
 import GameOverModal from "./ui/gameOverModal";
 import PawnPromotionModal from "./ui/pawnPromotionModal";
+import { useChessAudio } from "./useChessAudio";
 
 export default function Board() {
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
+  const { playMoveSound, playGameResultSound, isMuted, toggleMute } =
+    useChessAudio();
+  const prevResultRef = useRef<GameResult>(initialState.result);
   const [gameHistoryIndex, setGameHistoryIndex] = useState<number | null>(null);
   const [openInitialModal, setOpenInitialModal] = useState(true);
+
+  useEffect(() => {
+    const lastMove =
+      gameState.gameHistories?.[gameState.gameHistories.length - 1];
+
+    if (gameState.result !== prevResultRef.current) {
+      playGameResultSound(gameState.result);
+      prevResultRef.current = gameState.result;
+    } else if (lastMove) {
+      playMoveSound(lastMove, gameState);
+    }
+  }, [gameState?.gameHistories, gameState.result]);
 
   function isPawnPromotion(): boolean {
     const lastMove =
@@ -32,7 +49,8 @@ export default function Board() {
       lastMove &&
       (lastMove.piece === PieceTypes.WHITE_PAWN ||
         lastMove.piece === PieceTypes.BLACK_PAWN) &&
-      (lastMove.to <= 8 || lastMove.to >= 56) && gameState.capturedPieces.length > 0
+      (lastMove.to <= 8 || lastMove.to >= 56) &&
+      gameState.capturedPieces.length > 0
     ) {
       return true;
     }
@@ -151,7 +169,7 @@ export default function Board() {
         </button>
         <button onClick={onClickUndo}>Undo</button>
         <button>Restart</button>
-        <button>Mute</button>
+        <button onClick={toggleMute}>{isMuted ? "Unmute" : "Mute"}</button>
       </div>
       <div className="grid grid-cols-7 gap-4 w-full py-4">
         <div className="col-span-7 md:col-span-4 space-y-4">
