@@ -23,7 +23,11 @@ export const initialState: GameState = {
   currentPlayer: PlayerTypes.WHITE,
   selectedLocation: null,
   gameHistories: [],
-  capturedPieces: [],
+  capturedPieces: [
+    PieceTypes.WHITE_KNIGHT,
+    PieceTypes.WHITE_BISHOP,
+    PieceTypes.WHITE_QUEEN,
+  ],
   status: GameStatus.ONGOING,
   whiteTimer: DEFAULT_10_MIN,
   blackTimer: DEFAULT_10_MIN,
@@ -42,7 +46,11 @@ export default function gameReducer(state = initialState, action: any) {
     case actionTypes.MOVE_PIECE: {
       const { board, currentPlayer, status } = state;
 
-      if (status == GameStatus.CHECKMATE || status == GameStatus.TIMEOUT || status == GameStatus.STALEMATE) {
+      if (
+        status == GameStatus.CHECKMATE ||
+        status == GameStatus.TIMEOUT ||
+        status == GameStatus.STALEMATE
+      ) {
         console.log("game is not ongoing anymore");
         return { ...state };
       }
