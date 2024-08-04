@@ -12,7 +12,7 @@ export default function HistoryTable({
   gameHistoryIndex,
   onChangeHistory,
 }: HistoryProps) {
-  
+  // TODO: fix overflow scroll issue
   return (
     <div className="bg-[#262421] p-2 rounded-lg h-[calc(100%-45px)]">
       <table className="border-collapse w-full table-auto text-sm">
