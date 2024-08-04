@@ -67,7 +67,7 @@ export const initialChessBoard: PieceTypes[] = [
   PieceTypes.WHITE_ROOK,
 ];
 
-export const PIECE_IMAGES = {
+export const PIECE_IMAGES : Record<PieceTypes, string> = {
   [PieceTypes.WHITE_PAWN]:
     "https://assets-themes.chess.com/image/ejgfv/150/wp.png",
   [PieceTypes.WHITE_KNIGHT]:
@@ -92,6 +92,7 @@ export const PIECE_IMAGES = {
     "https://assets-themes.chess.com/image/ejgfv/150/bq.png",
   [PieceTypes.BLACK_KING]:
     "https://assets-themes.chess.com/image/ejgfv/150/bk.png",
+  [PieceTypes.EMPTY]: "", 
 };
 
 export const SQUARE_HORIZONTAL_LABEL: Record<number, string> = {
