@@ -23,11 +23,7 @@ export const initialState: GameState = {
   currentPlayer: PlayerTypes.WHITE,
   selectedLocation: null,
   gameHistories: [],
-  capturedPieces: [
-    PieceTypes.WHITE_KNIGHT,
-    PieceTypes.WHITE_BISHOP,
-    PieceTypes.WHITE_QUEEN,
-  ],
+  capturedPieces: [],
   status: GameStatus.ONGOING,
   whiteTimer: DEFAULT_10_MIN,
   blackTimer: DEFAULT_10_MIN,
@@ -44,7 +40,7 @@ export default function gameReducer(state = initialState, action: any) {
       };
     }
     case actionTypes.MOVE_PIECE: {
-      const { board, currentPlayer, status } = state;
+      const { board, currentPlayer, status, gameHistories } = state;
 
       if (
         status == GameStatus.CHECKMATE ||
@@ -121,7 +117,10 @@ export default function gameReducer(state = initialState, action: any) {
           oppositePlayer(currentPlayer)
         );
 
-        const copiedHistories = [...state.gameHistories];
+        const copiedHistories = gameHistories.map((history) => ({
+          ...history,
+        }));
+
         // TODO: castling, promotion implement later
         copiedHistories.push({
           from: selectedLocation,
@@ -144,18 +143,19 @@ export default function gameReducer(state = initialState, action: any) {
 
         if (isCheckmate(copiedBoard, oppositePlayer(currentPlayer))) {
           console.log("checkmate");
+          copiedHistories[copiedHistories?.length - 1].isCheckmate = true;
+
           return {
             ...state,
             board: copiedBoard,
             selectedLocation: null,
-            gameHistories: { ...copiedHistories, isCheckmate: true },
+            gameHistories: copiedHistories,
             capturedPieces: copiedCapturedPieces,
             status: GameStatus.CHECKMATE,
             result:
               currentPlayer === PlayerTypes.WHITE
                 ? GameResult.WHITE_WINS
                 : GameResult.BLACK_WINS,
-
             //TODO: get result function refactor
           };
         }
@@ -181,7 +181,7 @@ export default function gameReducer(state = initialState, action: any) {
 
       const lastMove = gameHistories[gameHistories.length - 2];
       const copiedBoard = [...lastMove.board];
-      const copiedHistories = [...gameHistories];
+      const copiedHistories = gameHistories.map((history) => ({ ...history }));
       copiedHistories.pop();
 
       return {
@@ -207,6 +207,24 @@ export default function gameReducer(state = initialState, action: any) {
     }
     case actionTypes.RESET: {
       return { ...initialState, isPaused: false };
+    }
+    case actionTypes.PAWN_PROMOTION: {
+      const pieceKey = action.payload;
+
+      const { gameHistories, board } = state;
+      const copiedHistories = gameHistories.map((history) => ({ ...history }));
+      const lastMove = copiedHistories[copiedHistories.length - 1];
+      lastMove.isPromotion = true;
+      lastMove.promotedTo = pieceKey;
+      const copiedBoard = [...board];
+      copiedBoard[lastMove.to] = pieceKey;
+      lastMove.board = copiedBoard;
+
+      return {
+        ...state,
+        board: copiedBoard,
+        gameHistories: copiedHistories,
+      };
     }
     default:
       return state;

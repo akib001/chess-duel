@@ -26,6 +26,7 @@ export enum actionTypes {
   TIME_UP = "TIME_UP",
   TOGGLE_PAUSE = "TOGGLE_PAUSE",
   RESET = "RESET",
+  PAWN_PROMOTION = "PAWN_PROMOTION",
 }
 
 export enum GameStatus {

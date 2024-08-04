@@ -25,20 +25,18 @@ export default function Board() {
   const [openInitialModal, setOpenInitialModal] = useState(true);
 
   function isPawnPromotion(): boolean {
-    // Check first and last rows for any pawn
-    for (let col = 0; col < 8; col++) {
-      const firstRowPiece = gameState.board[col];
-      const lastRowPiece = gameState.board[56 + col];
+    const lastMove =
+      gameState.gameHistories?.[gameState.gameHistories.length - 1];
 
-      if (
-        firstRowPiece === PieceTypes.WHITE_PAWN ||
-        firstRowPiece === PieceTypes.BLACK_PAWN ||
-        lastRowPiece === PieceTypes.WHITE_PAWN ||
-        lastRowPiece === PieceTypes.BLACK_PAWN
-      ) {
-        return true;
-      }
+    if (
+      lastMove &&
+      (lastMove.piece === PieceTypes.WHITE_PAWN ||
+        lastMove.piece === PieceTypes.BLACK_PAWN) &&
+      (lastMove.to <= 8 || lastMove.to >= 56) && gameState.capturedPieces.length > 0
+    ) {
+      return true;
     }
+
     return false;
   }
 
@@ -142,7 +140,7 @@ export default function Board() {
   };
 
   const handlePawnPromotion = (piece?: PieceTypes) => {
-    console.log("pawn promotion handle");
+    dispatch({ type: actionTypes.PAWN_PROMOTION, payload: piece });
   };
 
   return (
@@ -151,7 +149,7 @@ export default function Board() {
         <button onClick={handleTogglePause}>
           {gameState.isPaused ? "Play" : "Pause"}
         </button>
-        <button>Undo</button>
+        <button onClick={onClickUndo}>Undo</button>
         <button>Restart</button>
         <button>Mute</button>
       </div>
@@ -233,7 +231,7 @@ export default function Board() {
       />
       {isPawnPromotion() && (
         <PawnPromotionModal
-          onClose={handlePawnPromotion}
+          onHandlePawnPromotion={handlePawnPromotion}
           capturedPieces={gameState.capturedPieces}
           currentPlayer={gameState.currentPlayer}
         />

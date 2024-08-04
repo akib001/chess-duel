@@ -15,16 +15,18 @@ const PROMOTION_PIECES = new Set([
 ]);
 
 interface propTypes {
-  onClose: (piece?: PieceTypes) => void;
+  onHandlePawnPromotion: (piece?: PieceTypes) => void;
   capturedPieces: PieceTypes[];
   currentPlayer: PlayerTypes;
 }
 
 const PawnPromotionModal: React.FC<propTypes> = ({
-  onClose,
+  onHandlePawnPromotion,
   capturedPieces,
   currentPlayer,
 }) => {
+
+  // current player is changed to opponent player
   const playerWisePromotionPieces = Array.from(new Set(capturedPieces)).filter(
     (piece) =>
       isOpponentPiece(currentPlayer, piece) && PROMOTION_PIECES.has(piece)
@@ -47,6 +49,7 @@ const PawnPromotionModal: React.FC<propTypes> = ({
                 key={index}
                 src={PIECE_IMAGES[pieceKey]}
                 alt="captured pieces"
+                onClick={() => onHandlePawnPromotion(pieceKey)}
               />
             ))}
           </div>
