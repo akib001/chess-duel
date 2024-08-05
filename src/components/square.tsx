@@ -80,7 +80,7 @@ export default function Square({ index, children, gameState }: SquareProps) {
       <p className="bg-green-300 text-xs absolute top-0 right-1 text-black">{index}</p>
       {SQUARE_VERTICAL_LABEL[index] && (
         <p
-          className={`text-lg font-bold absolute top-0 left-1 ${
+          className={`text-sm font-bold absolute top-0 left-1 lg:text-lg ${
             isLightSquare ? "text-black" : "text-white"
           }`}
         >
@@ -90,7 +90,7 @@ export default function Square({ index, children, gameState }: SquareProps) {
 
       {SQUARE_HORIZONTAL_LABEL[index] && (
         <p
-          className={`text-lg font-bold absolute bottom-0 right-1 ${
+          className={`text-sm font-bold absolute bottom-0 right-1 lg:text-lg ${
             isLightSquare ? "text-black" : "text-white"
           }`}
         >

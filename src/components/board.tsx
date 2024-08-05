@@ -29,6 +29,7 @@ export default function Board() {
   const [gameHistoryIndex, setGameHistoryIndex] = useState<number | null>(null);
   const [openInitialModal, setOpenInitialModal] = useState(true);
 
+  // TODO: useEffect is causing delay in sound
   useEffect(() => {
     const lastMove =
       gameState.gameHistories?.[gameState.gameHistories.length - 1];
