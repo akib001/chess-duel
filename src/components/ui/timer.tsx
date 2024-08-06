@@ -59,7 +59,7 @@ const Timer: React.FC<TimerProps> = ({
     playerType === currentPlayer ? "bg-white text-black" : "bg-[#262421]";
 
   return (
-    <div className={`${backgroundColor} px-2 py-2 rounded-sm`}>
+    <div className={`${backgroundColor} px-2 py-2 rounded-sm w-14 text-center`}>
       {formatTime(timeLeft)}
     </div>
   );
