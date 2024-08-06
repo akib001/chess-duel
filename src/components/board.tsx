@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
+import { FaPlay, FaUndo, FaPlus } from "react-icons/fa";
 import gameReducer, { initialState } from "../../utils/gameReducer";
 import Square from "./square";
 import Piece from "./piece";
@@ -20,6 +21,10 @@ import InitialModal from "./ui/initialModal";
 import GameOverModal from "./ui/gameOverModal";
 import PawnPromotionModal from "./ui/pawnPromotionModal";
 import { useChessAudio } from "./useChessAudio";
+import BottomBtn from "./ui/bottomBtn";
+import { FaPause } from "react-icons/fa";
+import { FaVolumeXmark } from "react-icons/fa6";
+import { FaVolumeHigh } from "react-icons/fa6";
 
 export default function Board() {
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
@@ -164,14 +169,6 @@ export default function Board() {
 
   return (
     <DndContext onDragEnd={dragEndHandler} onDragStart={handleDragStart}>
-      <div className="space-x-2">
-        <button onClick={handleTogglePause}>
-          {gameState.isPaused ? "Play" : "Pause"}
-        </button>
-        <button onClick={onClickUndo}>Undo</button>
-        <button>Restart</button>
-        <button onClick={toggleMute}>{isMuted ? "Unmute" : "Mute"}</button>
-      </div>
       <div className="grid grid-cols-7 gap-4 w-full py-4">
         <div className="col-span-7 md:col-span-4 space-y-4">
           <div className="col-span-7 md:col-span-4 flex justify-between">
@@ -232,11 +229,31 @@ export default function Board() {
         </div>
 
         <div className="col-span-7 md:col-span-3">
-          <HistoryTable
-            gameHistories={gameState.gameHistories}
-            gameHistoryIndex={gameHistoryIndex}
-            onChangeHistory={onChangeHistory}
-          />
+          <div className="bg-[#262421] rounded-lg h-[calc(100%-45px)] overflow-auto">
+            <HistoryTable
+              gameHistories={gameState.gameHistories}
+              gameHistoryIndex={gameHistoryIndex}
+              onChangeHistory={onChangeHistory}
+            />
+            <div className="bg-black/15 grid grid-cols-4 gap-2 px-5 py-4">
+              <BottomBtn
+                onClick={handleGameOverModalClose}
+                title="New Game"
+                icon={<FaPlus />}
+              />
+              <BottomBtn onClick={onClickUndo} title="Undo" icon={<FaUndo />} />
+              <BottomBtn
+                onClick={handleTogglePause}
+                title={gameState.isPaused ? "play" : "Pause"}
+                icon={gameState.isPaused ? <FaPlay /> : <FaPause />}
+              />
+              <BottomBtn
+                title={isMuted ? "Volume" : "Mute"}
+                onClick={toggleMute}
+                icon={isMuted ? <FaVolumeHigh /> : <FaVolumeXmark />}
+              />
+            </div>
+          </div>
         </div>
       </div>
       <InitialModal

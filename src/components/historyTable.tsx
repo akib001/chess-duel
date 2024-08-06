@@ -1,7 +1,7 @@
 import { GameHistory } from "../../utils/common.interface";
 import { generateGameNotation } from "../../utils/gameHistoryUtils";
 
-interface HistoryProps {
+interface PropsTypes {
   gameHistories: Array<GameHistory>;
   gameHistoryIndex: number | null;
   onChangeHistory: (index: number) => void;
@@ -11,17 +11,16 @@ export default function HistoryTable({
   gameHistories,
   gameHistoryIndex,
   onChangeHistory,
-}: HistoryProps) {
-
+}: PropsTypes) {
   return (
-    <div className="bg-[#262421] p-2 rounded-lg h-[calc(100%-45px)] overflow-x-auto">
-      <table className="border-collapse w-full table-auto text-sm">
-        <caption className="text-slate-500 dark:text-slate-400 pb-4 text-sm caption-top">
-          Game Moves History
-        </caption>
+    <div className="p-4 h-[calc(100%-80px)]">
+      <h3 className="text-white text-lg mb-2 text-center">
+        Game Moves History
+      </h3>
+      <table className="border-collapse  w-full  text-sm">
         <thead>
           <tr>
-            <th className="border dark:border-slate-600 font-medium p-1 text-slate-400 dark:text-slate-200 text-left">
+            <th className="border w-16 dark:border-slate-600 font-medium p-1 text-slate-400 dark:text-slate-200 text-left">
               Serial
             </th>
             <th className="border dark:border-slate-600 font-medium p-1  text-slate-400 dark:text-slate-200 text-left">
@@ -35,7 +34,7 @@ export default function HistoryTable({
         <tbody className="">
           {generateGameNotation(gameHistories)?.map((item, index) => (
             <tr key={index}>
-              <td className="border border-slate-200 dark:border-slate-600 p-1 text-slate-500 dark:text-slate-400 w-12">
+              <td className="border border-slate-200 dark:border-slate-600 p-1 text-slate-500 dark:text-slate-400 ">
                 {item.serial}
               </td>
               <td className="border border-slate-200 dark:border-slate-600 p-1 text-slate-500 dark:text-slate-400">
