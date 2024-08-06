@@ -1,6 +1,6 @@
 import React from "react";
 import { PieceTypes, PlayerTypes } from "../../../utils/enums";
-import { isOpponentPiece } from "../../../utils/helpers";
+import { isPlayerPiece } from "../../../utils/helpers";
 import { PIECE_IMAGES } from "../../../utils/constants";
 
 interface NameAndCapturedProps {
@@ -13,7 +13,7 @@ const NameAndCaptured: React.FC<NameAndCapturedProps> = ({
   capturedPieces,
 }) => {
   const playerWiseCapturedPieces = capturedPieces?.filter((piece) =>
-    isOpponentPiece(playerType, piece)
+    isPlayerPiece(playerType, piece)
   );
 
   return (
@@ -23,7 +23,7 @@ const NameAndCaptured: React.FC<NameAndCapturedProps> = ({
       </p>
       <div className="flex">
         {playerWiseCapturedPieces?.length > 0 &&
-          playerWiseCapturedPieces?.map((pieceKey : PieceTypes, index) => (
+          playerWiseCapturedPieces?.map((pieceKey: PieceTypes, index) => (
             <img
               className="w-5 h-5"
               key={index}
