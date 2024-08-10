@@ -77,9 +77,9 @@ export default function Square({
     if (
       gameState.gameHistories?.length > 0 &&
       gameState.gameHistories[gameState.gameHistories.length - 1].isCheck &&
-      currentPlayer === PlayerTypes.BLACK
+      (currentPlayer === PlayerTypes.BLACK
         ? pieceKey === PieceTypes.BLACK_KING
-        : pieceKey === PieceTypes.WHITE_KING
+        : pieceKey === PieceTypes.WHITE_KING)
     ) {
       return (
         <div
