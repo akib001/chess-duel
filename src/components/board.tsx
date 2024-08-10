@@ -199,7 +199,7 @@ export default function Board() {
               ? gameState.gameHistories[gameHistoryIndex]
               : gameState
             )?.board.map((item: PieceTypes, i: number) => (
-              <Square key={`${item}-${i}`} index={i} gameState={gameState}>
+              <Square key={`${item}-${i}`} index={i} gameState={gameState} pieceKey={item}>
                 <Piece pieceKey={item} index={i} />
               </Square>
             ))}

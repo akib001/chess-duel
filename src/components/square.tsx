@@ -1,6 +1,6 @@
 import React from "react";
 import { checkMove, isOpponentPiece, isPlayerPiece } from "../../utils/helpers";
-import { PieceTypes } from "../../utils/enums";
+import { PieceTypes, PlayerTypes } from "../../utils/enums";
 import {
   SQUARE_HORIZONTAL_LABEL,
   SQUARE_VERTICAL_LABEL,
@@ -11,10 +11,16 @@ import { GameState } from "../../utils/common.interface";
 interface SquareProps {
   index: number;
   gameState: GameState;
+  pieceKey: PieceTypes;
   children: React.ReactNode;
 }
 
-export default function Square({ index, children, gameState }: SquareProps) {
+export default function Square({
+  index,
+  children,
+  pieceKey,
+  gameState,
+}: SquareProps) {
   const { isOver, setNodeRef } = useDroppable({
     id: `droppable-${index}`,
     data: {
@@ -32,17 +38,17 @@ export default function Square({ index, children, gameState }: SquareProps) {
 
   const legalMovesComponent = () => {
     if (currSelectedLocation == undefined) {
-      return "";
+      return null;
     }
 
     // can not capture own piece
     if (isPlayerPiece(gameState.currentPlayer, board[index])) {
-      return "";
+      return null;
     }
 
     // can not move other player's piece
     if (isOpponentPiece(gameState.currentPlayer, board[currSelectedLocation])) {
-      return "";
+      return null;
     }
 
     let isTryingToCapture =
@@ -53,10 +59,10 @@ export default function Square({ index, children, gameState }: SquareProps) {
     if (checkMove(currSelectedLocation, index, currentPlayer, board)) {
       return isTryingToCapture ? (
         <div
-        className={`w-full h-full m-1 absolute bg-transparent 
+          className={`w-full h-full m-1 absolute bg-transparent 
         ${isLightSquare ? "border-black" : "border-white"} 
         border-8 border-opacity-20 rounded-full animate-pulse`}
-      />
+        />
       ) : (
         <div
           className={`w-7 h-7 absolute ${
@@ -65,6 +71,26 @@ export default function Square({ index, children, gameState }: SquareProps) {
         />
       );
     }
+  };
+
+  const getKingCheckIndicator = () => {
+    if (
+      gameState.gameHistories?.length > 0 &&
+      gameState.gameHistories[gameState.gameHistories.length - 1].isCheck &&
+      currentPlayer === PlayerTypes.BLACK
+        ? pieceKey === PieceTypes.BLACK_KING
+        : pieceKey === PieceTypes.WHITE_KING
+    ) {
+      return (
+        <div
+          className={`w-full h-full m-1 absolute bg-transparent 
+      border-red-400
+      border-8  rounded-full animate-pulse`}
+        />
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -77,7 +103,9 @@ export default function Square({ index, children, gameState }: SquareProps) {
           : ""
       } ${isOver ? "opacity-50" : ""}`}
     >
-      {/* <p className="bg-green-300 text-xs absolute top-0 right-1 text-black">{index}</p> */}
+      <p className="bg-green-300 text-xs absolute top-0 right-1 text-black">
+        {index}
+      </p>
       {SQUARE_VERTICAL_LABEL[index] && (
         <p
           className={`text-sm font-bold absolute top-0 left-1 lg:text-lg ${
@@ -99,6 +127,8 @@ export default function Square({ index, children, gameState }: SquareProps) {
       )}
 
       {legalMovesComponent()}
+
+      {getKingCheckIndicator()}
 
       {children}
     </div>

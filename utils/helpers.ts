@@ -145,41 +145,6 @@ const checkBishopMoves = (
 
 const QUEEN_MOVIES = [...BISHOP_MOVES, ...ROOK_MOVES];
 
-const checkQueenMoves = (
-  startRow: number,
-  startCol: number,
-  endRow: number,
-  endCol: number,
-  board: Array<PieceTypes>
-) => {
-  for (const [row, col] of QUEEN_MOVIES) {
-    let tempRow = startRow;
-    let tempCol = startCol;
-
-    while (true) {
-      tempRow = tempRow + row;
-      tempCol = tempCol + col;
-
-      // out bound
-      if (tempRow < 0 || tempRow > 7 || tempCol < 0 || tempCol > 7) {
-        break;
-      }
-
-      if (tempRow == endRow && tempCol == endCol) {
-        return true;
-      }
-
-      if (board[tempRow * 8 + tempCol]) {
-        break;
-      }
-    }
-  }
-
-  // console.log("could not found any matching end");
-
-  return false;
-};
-
 const checkSlidingPieceMoves = (
   startLocation: number,
   endLocation: number,
@@ -360,7 +325,7 @@ export function isKingInCheck(
   player: PlayerTypes
 ): boolean {
   for (let i = 0; i < 64; i++) {
-    if (board[i] !== PieceTypes.EMPTY  && isOpponentPiece(player, board[i])) {
+    if (board[i] !== PieceTypes.EMPTY && isOpponentPiece(player, board[i])) {
       if (checkMove(i, kingPosition, oppositePlayer(player), board)) {
         return true;
       }
@@ -403,7 +368,6 @@ function canBlockOrCaptureAttacker(
 ): boolean {
   const attackingPositions = findAttackingPieces(board, kingPosition, player);
 
-
   for (let i = 0; i < 64; i++) {
     if (board[i] !== PieceTypes.EMPTY && isPlayerPiece(player, board[i])) {
       for (const attackPos of attackingPositions) {
@@ -417,17 +381,22 @@ function canBlockOrCaptureAttacker(
           }
         }
 
-        // Check if we can block the attack
-        const blockPositions = getPositionsBetween(kingPosition, attackPos);
-        for (const blockPos of blockPositions) {
-          if (checkMove(i, blockPos, player, board)) {
-            const tempBoard = [...board];
-            tempBoard[blockPos] = tempBoard[i];
-            tempBoard[i] = PieceTypes.EMPTY;
-            // Cause king position can be changed after blocking
-            const newKingPosition = findKingPosition(tempBoard, player);
-            if (!isKingInCheck(tempBoard, newKingPosition, player)) {
-              return true;
+        if (
+          board[attackPos] !== PieceTypes.BLACK_KNIGHT &&
+          board[attackPos] !== PieceTypes.WHITE_KNIGHT
+        ) {
+          // Check if we can block the attack
+          const blockPositions = getPositionsBetween(kingPosition, attackPos);
+          for (const blockPos of blockPositions) {
+            if (checkMove(i, blockPos, player, board)) {
+              const tempBoard = [...board];
+              tempBoard[blockPos] = tempBoard[i];
+              tempBoard[i] = PieceTypes.EMPTY;
+              // Cause king position can be changed after blocking
+              const newKingPosition = findKingPosition(tempBoard, player);
+              if (!isKingInCheck(tempBoard, newKingPosition, player)) {
+                return true;
+              }
             }
           }
         }
@@ -462,16 +431,16 @@ function findAttackingPieces(
 
 function getPositionsBetween(start: number, end: number): number[] {
   const positions = [];
-  const startRow = Math.floor(start / 8);
-  const startCol = start % 8;
-  const endRow = Math.floor(end / 8);
-  const endCol = end % 8;
+  const startRow = Math.floor(start / 8); // 0
+  const startCol = start % 8; // 4
+  const endRow = Math.floor(end / 8); // 1
+  const endCol = end % 8; // 2
 
-  const rowStep = Math.sign(endRow - startRow);
-  const colStep = Math.sign(endCol - startCol);
+  const rowStep = Math.sign(endRow - startRow); // +1
+  const colStep = Math.sign(endCol - startCol); // -1
 
-  let currentRow = startRow + rowStep;
-  let currentCol = startCol + colStep;
+  let currentRow = startRow + rowStep; // 1 2
+  let currentCol = startCol + colStep; // 3 2
 
   while (currentRow !== endRow || currentCol !== endCol) {
     positions.push(currentRow * 8 + currentCol);
