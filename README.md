@@ -1,7 +1,7 @@
 ```markdown
 # Chess Duel
 
-![Chess Duel Screenshot](https://prnt.sc/KoVfTKpjnqo7)
+![Chess Duel Screenshot](https://i.ibb.co/L1b9TLN/chess-duel-screenshot.png)
 
 Chess Duel is an open-source, feature-rich chess game built with Next.js. It offers a comprehensive chess-playing experience with a focus on two-player gameplay and interactive features.
 
@@ -26,11 +26,11 @@ Chess Duel is an open-source, feature-rich chess game built with Next.js. It off
 
 ## Live Demo
 
-You can play Chess Duel online at [https://chessduel.netlify.app/](https://chessduel.netlify.app/)
+You can play Chess Duel online at <a href="https://chessduel.netlify.app/" target="_blank">https://chessduel.netlify.app/</a>
 
 ## Getting Started
 
-This project is built with [Next.js](https://nextjs.org/) and bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This project is built with <a href="https://nextjs.org/" target="_blank">Next.js</a> and bootstrapped with <a href="https://github.com/vercel/next.js/tree/canary/packages/create-next-app" target="_blank">`create-next-app`</a>.
 
 ### Prerequisites
 
@@ -59,7 +59,7 @@ This project is built with [Next.js](https://nextjs.org/) and bootstrapped with 
    yarn dev
    ```
 
-4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open <a href="http://localhost:3000" target="_blank">http://localhost:3000</a> with your browser to see the result.
 
 ## Usage
 
@@ -88,13 +88,13 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## Acknowledgments
 
-- [Next.js](https://nextjs.org/) - The React Framework for Production
-- [React](https://reactjs.org/) - A JavaScript library for building user interfaces
+- <a href="https://nextjs.org/" target="_blank">Next.js</a> - The React Framework for Production
+- <a href="https://reactjs.org/" target="_blank">React</a> - A JavaScript library for building user interfaces
 
 ## Contact
 
-Md Azaz Ahmed - [azaz.me](https://azaz.me)
+Md Azaz Ahmed - <a href="https://azaz.me" target="_blank">azaz.me</a>
 
-Project Link: [https://github.com/akib001/chess-duel](https://github.com/akib001/chess-duel)
+Project Link: <a href="https://github.com/akib001/chess-duel" target="_blank">https://github.com/akib001/chess-duel</a>
 
-Live Demo: [https://chessduel.netlify.app/](https://chessduel.netlify.app/)
+Live Demo: <a href="https://chessduel.netlify.app/" target="_blank">https://chessduel.netlify.app/</a>
