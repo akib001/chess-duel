@@ -1,7 +1,6 @@
 ```markdown
 # Chess Duel
-
-![Chess Duel Screenshot](https://i.ibb.co/L1b9TLN/chess-duel-screenshot.png)
+![Chess Duel Screenshot](https://github.com/user-attachments/assets/530126b4-b22c-4882-a212-cb9b5f2e33cf)
 
 Chess Duel is an open-source, feature-rich chess game built with Next.js. It offers a comprehensive chess-playing experience with a focus on two-player gameplay and interactive features.
 
