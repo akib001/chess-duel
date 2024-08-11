@@ -1,4 +1,3 @@
-```markdown
 # Chess Duel
 ![Chess Duel Screenshot](https://github.com/user-attachments/assets/530126b4-b22c-4882-a212-cb9b5f2e33cf)
 
