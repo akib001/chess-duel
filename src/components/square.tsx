@@ -103,9 +103,10 @@ export default function Square({
           : ""
       } ${isOver ? "opacity-50" : ""}`}
     >
-      <p className="bg-green-300 text-xs absolute top-0 right-1 text-black">
+      {/* used for debugging purposes */}
+      {/* <p className="bg-green-300 text-xs absolute top-0 right-1 text-black">
         {index}
-      </p>
+      </p> */}
       {SQUARE_VERTICAL_LABEL[index] && (
         <p
           className={`text-sm font-bold absolute top-0 left-1 lg:text-lg ${
