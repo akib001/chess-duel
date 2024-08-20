@@ -5,6 +5,7 @@ import gameReducer, { initialState } from "../../utils/gameReducer";
 import Square from "./square";
 import Piece from "./piece";
 import {
+  GameMode,
   GameResult,
   GameStatus,
   PieceTypes,
@@ -25,6 +26,7 @@ import BottomBtn from "./ui/bottomBtn";
 import { FaPause } from "react-icons/fa";
 import { FaVolumeXmark } from "react-icons/fa6";
 import { FaVolumeHigh } from "react-icons/fa6";
+import { DEFAULT_10_MIN } from "../../utils/constants";
 
 export default function Board() {
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
@@ -33,6 +35,8 @@ export default function Board() {
   const prevResultRef = useRef<GameResult>(initialState.result);
   const [gameHistoryIndex, setGameHistoryIndex] = useState<number | null>(null);
   const [openInitialModal, setOpenInitialModal] = useState(true);
+  const [resetTimer, setResetTimer] = useState(false);
+
 
   // TODO: useEffect is causing delay in sound
   useEffect(() => {
@@ -98,7 +102,9 @@ export default function Board() {
     }
     const currentPlayer = gameState.currentPlayer;
     const selectedLocation = gameState.selectedLocation;
-    const selectedPiece = gameState.board[selectedLocation];
+    const selectedPiece = selectedLocation
+      ? gameState.board[selectedLocation]
+      : null;
     const isClick = startDragIndex == endDragIndex;
     const dragEndPiece = gameState.board[endDragIndex];
 
@@ -120,6 +126,7 @@ export default function Board() {
     } else if (
       selectedLocation !== null &&
       isClick &&
+      selectedPiece &&
       isPlayerPiece(currentPlayer, selectedPiece)
     ) {
       if (isPlayerPiece(currentPlayer, dragEndPiece)) {
@@ -154,13 +161,28 @@ export default function Board() {
     dispatch({ type: actionTypes.TOGGLE_PAUSE });
   };
 
-  const handleInitialModalClose = () => {
+  const handleStartTimedNewGame = () => {
     setOpenInitialModal(false);
-    handleTogglePause();
+    handleResetTimer();
+    dispatch({
+      type: actionTypes.RESET,
+      payload: GameMode.TIMED_PLAYER_VS_PLAYER,
+    });
+  };
+
+  const handleResetTimer = () => {
+    setResetTimer(prev => !prev);
+  };
+
+  const handleStartNewGame = () => {
+    setOpenInitialModal(false);
+    dispatch({ type: actionTypes.RESET, payload: GameMode.PLAYER_VS_PLAYER });
+    handleResetTimer();
   };
 
   const handleGameOverModalClose = () => {
-    dispatch({ type: actionTypes.RESET });
+    dispatch({ type: actionTypes.RESET, payload: gameState.gameMode });
+    handleResetTimer();
   };
 
   const handlePawnPromotion = (piece?: PieceTypes) => {
@@ -181,7 +203,11 @@ export default function Board() {
             </div>
             <Timer
               playerType={PlayerTypes.BLACK}
-              initialTime={gameState.blackTimer}
+              initialTime={
+                gameState.gameMode === GameMode.PLAYER_VS_PLAYER
+                  ? 0
+                  : DEFAULT_10_MIN
+              }
               isRunning={
                 gameState.currentPlayer === PlayerTypes.BLACK &&
                 (gameState.status === GameStatus.ONGOING ||
@@ -190,7 +216,10 @@ export default function Board() {
               }
               currentPlayer={gameState.currentPlayer}
               onTimeUp={handleTimeUp}
-              result={gameState.result}
+              resetTimer={resetTimer}
+              isTimeIncreasing={
+                gameState.gameMode === GameMode.PLAYER_VS_PLAYER
+              }
             />
           </div>
 
@@ -199,7 +228,12 @@ export default function Board() {
               ? gameState.gameHistories[gameHistoryIndex]
               : gameState
             )?.board.map((item: PieceTypes, i: number) => (
-              <Square key={`${item}-${i}`} index={i} gameState={gameState} pieceKey={item}>
+              <Square
+                key={`${item}-${i}`}
+                index={i}
+                gameState={gameState}
+                pieceKey={item}
+              >
                 <Piece pieceKey={item} index={i} />
               </Square>
             ))}
@@ -214,7 +248,11 @@ export default function Board() {
             </div>
             <Timer
               playerType={PlayerTypes.WHITE}
-              initialTime={gameState.blackTimer}
+              initialTime={
+                gameState.gameMode === GameMode.PLAYER_VS_PLAYER
+                  ? 0
+                  : DEFAULT_10_MIN
+              }
               isRunning={
                 gameState.currentPlayer === PlayerTypes.WHITE &&
                 (gameState.status === GameStatus.ONGOING ||
@@ -223,7 +261,10 @@ export default function Board() {
               }
               currentPlayer={gameState.currentPlayer}
               onTimeUp={handleTimeUp}
-              result={gameState.result}
+              resetTimer={resetTimer}
+              isTimeIncreasing={
+                gameState.gameMode === GameMode.PLAYER_VS_PLAYER
+              }
             />
           </div>
         </div>
@@ -258,7 +299,8 @@ export default function Board() {
       </div>
       <InitialModal
         isOpen={openInitialModal}
-        onClose={handleInitialModalClose}
+        onStartNewGame={handleStartNewGame}
+        onStartTimedNewGame={handleStartTimedNewGame}
       />
       <GameOverModal
         result={gameState.result}

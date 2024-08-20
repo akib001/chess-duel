@@ -43,3 +43,8 @@ export enum GameResult {
   BLACK_WINS = "BLACK_WINS",
   DRAW = "DRAW",
 }
+
+export enum GameMode {
+  PLAYER_VS_PLAYER = "PLAYER_VS_PLAYER",
+  TIMED_PLAYER_VS_PLAYER = "TIMED_PLAYER_VS_PLAYER",
+}

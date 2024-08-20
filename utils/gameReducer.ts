@@ -1,6 +1,7 @@
 import { GameState } from "./common.interface";
 import { DEFAULT_10_MIN, initialChessBoard } from "./constants";
 import {
+  GameMode,
   GameResult,
   GameStatus,
   PieceTypes,
@@ -29,9 +30,10 @@ export const initialState: GameState = {
   blackTimer: DEFAULT_10_MIN,
   isPaused: true,
   result: GameResult.ONGOING,
+  gameMode: GameMode.TIMED_PLAYER_VS_PLAYER,
 };
 
-export default function gameReducer(state = initialState, action: any) {
+export default function gameReducer(state = initialState, action: any) : GameState {
   switch (action.type) {
     case actionTypes.SELECT_PIECE: {
       return {
@@ -206,7 +208,15 @@ export default function gameReducer(state = initialState, action: any) {
       };
     }
     case actionTypes.RESET: {
-      return { ...initialState, isPaused: false };
+      const gameMode = action.payload;
+
+      return {
+        ...initialState,
+        blackTimer: gameMode == GameMode.PLAYER_VS_PLAYER ? 0 : DEFAULT_10_MIN,
+        whiteTimer: gameMode == GameMode.PLAYER_VS_PLAYER ? 0 : DEFAULT_10_MIN,
+        gameMode: gameMode,
+        isPaused: false,
+      };
     }
     case actionTypes.PAWN_PROMOTION: {
       const pieceKey = action.payload;

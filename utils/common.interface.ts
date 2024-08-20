@@ -1,4 +1,4 @@
-import { GameResult, GameStatus, PieceTypes, PlayerTypes } from "./enums";
+import { GameMode, GameResult, GameStatus, PieceTypes, PlayerTypes } from "./enums";
 
 export interface GameHistory {
   from: number;
@@ -24,6 +24,7 @@ export interface GameState {
   blackTimer: number;
   isPaused: boolean;
   result: GameResult;
+  gameMode: GameMode;
 }
 
 interface playerNotation {

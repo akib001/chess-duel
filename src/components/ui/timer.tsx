@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { GameResult, PlayerTypes } from "../../../utils/enums";
+import { PlayerTypes } from "../../../utils/enums";
 
 interface TimerProps {
   playerType: PlayerTypes;
@@ -7,7 +7,8 @@ interface TimerProps {
   isRunning: boolean;
   currentPlayer: PlayerTypes;
   onTimeUp: () => void;
-  result: GameResult;
+  resetTimer: boolean;
+  isTimeIncreasing: boolean;
 }
 
 const Timer: React.FC<TimerProps> = ({
@@ -16,38 +17,40 @@ const Timer: React.FC<TimerProps> = ({
   isRunning,
   currentPlayer,
   onTimeUp,
-  result,
+  resetTimer,
+  isTimeIncreasing
 }) => {
-  const [timeLeft, setTimeLeft] = useState(initialTime);
+  const [timeLeft, setTimeLeft] = useState(() => initialTime);
 
   useEffect(() => {
-    if (result !== GameResult.ONGOING) {
-      setTimeLeft(initialTime);
-    }
-  }, [initialTime, result]);
+    setTimeLeft(initialTime);
+  }, [initialTime, resetTimer]);
+
+
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
+    const addAmount = isTimeIncreasing ? 1 : -1;
 
-    if (isRunning && timeLeft > 0) {
+    if (isRunning && ((!isTimeIncreasing && timeLeft > 0) || isTimeIncreasing)) {
       interval = setInterval(() => {
         setTimeLeft((prevTime) => {
-          if (prevTime <= 1) {
+          if (prevTime <= 1 && !isTimeIncreasing) {
             if (interval) clearInterval(interval);
             onTimeUp();
             return 0;
           }
-          return prevTime - 1;
+          return prevTime + addAmount;
         });
       }, 1000);
-    } else if (!isRunning && interval) {
+    } else if (!isRunning && interval && !isTimeIncreasing) {
       clearInterval(interval);
     }
 
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isRunning, timeLeft, onTimeUp]);
+  }, [isRunning, timeLeft, onTimeUp, isTimeIncreasing]);
 
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
