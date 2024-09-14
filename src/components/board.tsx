@@ -25,6 +25,7 @@ import BottomBtn from "./ui/bottomBtn";
 import { FaPause } from "react-icons/fa";
 import { FaVolumeXmark } from "react-icons/fa6";
 import { FaVolumeHigh } from "react-icons/fa6";
+import io from 'socket.io-client';
 
 export default function Board() {
   const [gameState, dispatch] = useReducer(gameReducer, initialState);
@@ -33,6 +34,30 @@ export default function Board() {
   const prevResultRef = useRef<GameResult>(initialState.result);
   const [gameHistoryIndex, setGameHistoryIndex] = useState<number | null>(null);
   const [openInitialModal, setOpenInitialModal] = useState(true);
+
+  useEffect(() => {
+    // Replace 'http://localhost:3000' with your server URL
+    const socket = io('http://localhost:8080');
+
+    socket.on('connect', () => {
+      console.log('Connected to server');
+    });
+
+    socket.on('initial message', (data) => {
+      console.log('init', data);
+    })
+
+    socket.emit('initial message', 'Hello from client');
+
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from server');
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   // TODO: useEffect is causing delay in sound
   useEffect(() => {
